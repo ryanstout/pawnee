@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'pawnee/cli'
+Pawnee::CLI.start
+  
