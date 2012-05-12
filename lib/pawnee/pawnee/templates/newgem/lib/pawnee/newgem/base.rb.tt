@@ -1,0 +1,19 @@
+require "<%= config[:name] %>/version"
+require 'pawnee/base'
+
+<%- config[:constant_array].each_with_index do |c,i| -%>
+<%= '  '*i %>module <%= c %>
+<%- end -%>
+<%- j = config[:constant_array].size -%>
+<%= '  '*j %>class Base < Pawnee::Base
+<%= '  '*j %>  def setup
+<%= '  '*j %>    # Add your setup code here
+<%= '  '*j %>  end
+<%= '  '*j %>  
+<%= '  '*j %>  def teardown
+<%= '  '*j %>    # Add your teardown code here
+<%= '  '*j %>  end
+<%= '  '*j %>end
+<%- (config[:constant_array].size-1).downto(0) do |i| -%>
+<%= '  '*i %>end
+<%- end -%>

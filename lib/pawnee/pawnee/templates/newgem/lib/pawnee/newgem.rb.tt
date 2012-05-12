@@ -1,4 +1,5 @@
-require "<%=config[:name]%>/version"
+require 'pawnee/setup'
+Pawnee::Base.setup('pawnee-<%= config[:name] %>')
 
 <%- config[:constant_array].each_with_index do |c,i| -%>
 <%= '  '*i %>module <%= c %>
