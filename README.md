@@ -22,9 +22,19 @@ This system will:
   - but deploying should be a separate thing (not like rubber)
 6) It should use thor for template stuff
 	- and just overwrite it so files get copied to remote destinations if needed
+	
+	
+
+RECIPE:
+#setup(destination_server='something.com')
 
 
+Problems with Chef/Puppet
+-------------------------
 
+1) Little to no testing of recipes (at least for Chef)
+2) Complicated recipe upgrading/code reuse patterns
+3) You need to run the code locally (should be over ssh)
 
 [chef's providers as an example: http://wiki.opscode.com/display/chef/Resources]
 Helpers
