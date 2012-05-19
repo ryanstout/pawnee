@@ -2,13 +2,14 @@ require 'net/ssh'
 require "pawnee/setup"
 require "pawnee/version"
 require 'thor'
+require 'thor-ssh'
 
 module Pawnee
   class Base < Thor
     include Thor::Actions
     
     def initialize(destination_server)
-      puts "ARGS: #{args.inspect}"
+
     end
     
     attr_reader :connection
