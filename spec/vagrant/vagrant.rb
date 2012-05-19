@@ -1,12 +1,29 @@
-# Gets the parameters for logging into the vagrant server
-
 require 'vagrant'
+require 'net/ssh'
 
-@vm = Vagrant::Environment.new
-pk_path = @vm.config.ssh.private_key_path || @vm.env.default_private_key_path
-keys = [File.expand_path(pk_path, @vm.env.root_path)]
+# Return an ssh connection
+class VagrantManager
+  def self.connect
+    @vm = Vagrant::Environment.new(:cwd => File.dirname(__FILE__)).primary_vm
 
-host      = env.primary_vm.config.ssh.host
-port      = env.primary_vm.config.ssh.port
-username  = env.primary_vm.config.ssh.username
+    ssh_info = @vm.ssh.info
+
+    # Build the options we'll use to initiate the connection via Net::SSH
+    opts = {
+      :port                  => ssh_info[:port],
+      :keys                  => [ssh_info[:private_key_path]],
+      :keys_only             => true,
+      :user_known_hosts_file => [],
+      :paranoid              => false,
+      :config                => false,
+      :forward_agent         => ssh_info[:forward_agent]
+    }
+
+    # Check that the private key permissions are valid
+    @vm.ssh.check_key_permissions(ssh_info[:private_key_path])
+
+    # Connect to SSH, giving it a few tries
+    return Net::SSH.start(ssh_info[:host], ssh_info[:username], opts)
+  end
+end
 

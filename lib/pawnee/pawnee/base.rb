@@ -3,31 +3,13 @@ require "pawnee/setup"
 require "pawnee/version"
 require 'thor'
 require 'thor-ssh'
+require 'pawnee/actions/package'
 
 module Pawnee
   class Base < Thor
     include Thor::Actions
-    
-    def initialize(destination_server)
-
-    end
-    
-    attr_reader :connection
-    # Proxy the file object, so all file operations can happen local
-    # or remote
-    
-    # Connect to the remote server or run locally
-    # def connect
-    #   @connection = Net::SSH.start('44dates.com', 'ubuntu')
-    # end
-    # 
-    # def disconnect
-    #   @connection.close
-    # end
-    
-    # def remote_file
-    #   @file ||= Pawnee::FileProxy.new(connection)
-    # end
+    include ThorSsh::Actions
+    include Pawnee::Actions
     
     # All recipies should subclass Pawnee::Base and implement setup to
     # install everything needed for the gem

@@ -1,9 +1,8 @@
 require 'spec_helper'
-require 'pawnee/base'
 
 describe Pawnee::Base do
   before do
-    @base = Pawnee::Base.new('some_server')
+    @base = Pawnee::Base.new
   end
   
   it "should respond to setup" do
