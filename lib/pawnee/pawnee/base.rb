@@ -4,6 +4,7 @@ require "pawnee/version"
 require 'thor'
 require 'thor-ssh'
 require 'pawnee/actions/package'
+require 'pawnee/actions/compile'
 
 module Pawnee
   class Base < Thor

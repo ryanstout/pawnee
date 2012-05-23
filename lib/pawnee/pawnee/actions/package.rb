@@ -29,7 +29,7 @@ module Pawnee
     # === Parameters
     # package_name<String>:: The name of package
     def installed_package_version(package_name)
-      packages = destination_server.run("sudo dpkg -l")
+      packages = exec("sudo dpkg -l")
       
       packages.split(/\n/).grep(/^ii /).each do |package|
         _, name, version = package.split(/\s+/)
@@ -56,7 +56,7 @@ module Pawnee
         say_status "package already installed", package_name
       else
         package_name = "#{package_name}=#{version}" if version
-        destination_server.run "sudo apt-get -y install #{package_name}"
+        exec("sudo apt-get -y install #{package_name}")
         say_status "installed package", package_name.gsub('=', ' ')
       end
     end
@@ -68,7 +68,7 @@ module Pawnee
     def remove_package(package_name)
       if package_installed?(package_name)
         say_status "removed package", package_name
-        destination_server.run "sudo apt-get -y remove #{package_name}"
+        exec("sudo apt-get -y remove #{package_name}")
       else
         say_status "package not removed", package_name
       end

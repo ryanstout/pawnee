@@ -24,6 +24,17 @@ This system will:
 	- and just overwrite it so files get copied to remote destinations if needed
 	
 	
+	
+TODO: Something like:
+
+in_group('group') do
+	in_user('user') do
+		...
+	end
+end
+
+TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions (example, git gem provides git actions)
+
 
 RECIPE:
 #setup(destination_server='something.com')
@@ -39,12 +50,14 @@ Problems with Chef/Puppet
 [chef's providers as an example: http://wiki.opscode.com/display/chef/Resources]
 Helpers
 - user
-- file
-- directory
-- package
+- file [done]
+- directory [done]
+- package [done]
 - service (restart maybe?)
-- compile: tar/make/make install
+- compile: tar/make/make install [done]
 - gem install
+- cron? (maybe leverage whenever)
+- env (manage adding things to .base_profile somehow - maybe leverage insert_into_file stuff?)
 
 
 Some standards:
