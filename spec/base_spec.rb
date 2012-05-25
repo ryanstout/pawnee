@@ -14,10 +14,10 @@ describe Pawnee::Base do
   end
   
   it 'should raise an exception when setup is called' do
-    -> { @base.setup }.should raise_error(RuntimeError)
+    -> { @base.setup('severdomain.com') }.should raise_error(RuntimeError)
   end
   
   it 'should raise an exception when teardown is called' do
-    -> { @base.teardown }.should raise_error(RuntimeError)
+    -> { @base.teardown('severdomain.com') }.should raise_error(RuntimeError)
   end
 end

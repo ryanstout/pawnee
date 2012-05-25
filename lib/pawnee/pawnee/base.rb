@@ -39,6 +39,11 @@ module Pawnee
     
     
     private
+      # Assigns the role for this class
+      def self.role(role_name)
+        @role = role_name
+      end
+    
       # Inherited is called when a class inherits from Pawnee::Base, it then
       # sets up the class in the pawnee command cli, and sets up the namespace.
       # It also registeres the recipe so that it can be accessed later
@@ -53,6 +58,29 @@ module Pawnee
         
         @recipes ||= []
         @recipes << subclass
+        
+        # Assign the role (will be overridden by role :something in the class)
+        subclass.role(class_name)
+      end
+      
+      def self.recipes
+        @recipes
+      end
+      
+      # Invokes all recipes that implement the passed in role
+      def invoke_roles(roles, server, options={})
+        # Check to make sure some recipes have been added
+        if self.class.recipes.is_a?(Array)
+          self.recipes.each do |recipe_class|
+            role = recipe_class.instance_variable_get('@role').to_s
+            
+            if roles.include?(role)
+              # This class matches the role, so we should run it
+              recipe = recipe_class.new({}, options)
+              recipe.setup(server)
+            end
+          end
+        end
       end
   end
 end

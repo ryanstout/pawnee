@@ -13,6 +13,8 @@ module Pawnee
     # url<String>:: The url to download
     # temp_dir<String>:: Where the compilation should take place
     def compile(url, temp_dir)
+      # TODO: Add invoke/revoke support using action(...), maybe 
+      # make things run via Thor::Group
       Compile.new(self, url, temp_dir)
     end
     
