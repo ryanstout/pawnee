@@ -6,10 +6,12 @@ require 'pawnee/base'
 <%- end -%>
 <%- j = config[:constant_array].size -%>
 <%= '  '*j %>class Base < Pawnee::Base
+<%= '  '*j %>  desc "setup SERVER", 'setup on the destination server'
 <%= '  '*j %>  def setup
 <%= '  '*j %>    # Add your setup code here
 <%= '  '*j %>  end
 <%= '  '*j %>  
+<%= '  '*j %>  desc "teardown SERVER", 'teardown on the destination server'
 <%= '  '*j %>  def teardown
 <%= '  '*j %>    # Add your teardown code here
 <%= '  '*j %>  end

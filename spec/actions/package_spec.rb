@@ -11,6 +11,7 @@ describe Pawnee::Base do
   
   it 'should install a package' do
     @base.install_package('memcached', '1.4.7-0.1ubuntu1')
+    @base.exec('which memcached').strip.should != ''
   end
 
   it 'should not reinstall a package' do
@@ -25,6 +26,7 @@ describe Pawnee::Base do
   
   it "should remove a package" do
     @base.remove_package('memcached')
+    @base.exec('which memcached').strip.should == ''
   end
 
   it "should not try to re-remove a package" do

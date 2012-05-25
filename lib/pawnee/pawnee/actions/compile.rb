@@ -19,6 +19,13 @@ module Pawnee
     class Compile
       attr_accessor :base
       
+      # Sets up a compile object
+      #
+      # === Parameters
+      # base<Thor>:: The main class
+      # url<String>:: The url to download from
+      # temp_dir<String>:: A path to a temporary directory where the compilation 
+      # can take place
       def initialize(base, url, temp_dir)
         @base = base
         @temp_dir = temp_dir
@@ -37,10 +44,9 @@ module Pawnee
         configure
         make
         make_install
-
       end
       
-      # Download the file
+      # Uses get to download the file and place it in the temp path
       def download(url)
         base.get(url, @file_path)
       end
@@ -58,6 +64,13 @@ module Pawnee
         base.destination_files.rm_rf(@file_path)
       end
       
+      # Takes a command and an action_name.  It says its running the action_name, then
+      # runs the command and if there is non-zero exit status, it prints out an error,
+      # stdout, and stderr, then raises an exception
+      #
+      # === Parameters
+      # command<String>:: The command to be run
+      # action_name<String>:: An action name (used to explain what is happening)
       def run_with_failure_handler(command, action_name)
         base.say_status action_name.downcase, ''
         stdout, stderr, exit_code, exit_status = base.exec(command, true)
@@ -67,18 +80,21 @@ module Pawnee
           puts stdout
           puts stderr
           
-          raise 'Unable to configure'
+          raise "Unable to configure #{action_name}"
         end
       end
 
+      # Runs ./configure on the files
       def configure
         run_with_failure_handler("cd #{@extracted_path} ; ./configure", 'configure')
       end
       
+      # Runs make
       def make
         run_with_failure_handler("cd #{@extracted_path} ; make", 'make')
       end
       
+      # Runs sudo make install
       def make_install
         run_with_failure_handler("cd #{@extracted_path} ; sudo make install", 'make install')
       end

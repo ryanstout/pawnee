@@ -1,8 +1,9 @@
 require 'vagrant'
 require 'net/ssh'
 
-# Return an ssh connection
+# Return an ssh connection to the vagrant server
 class VagrantManager
+  # Returns a connected Net::SSH connection
   def self.connect
     @vm = Vagrant::Environment.new(:cwd => File.dirname(__FILE__)).primary_vm
 

@@ -49,12 +49,12 @@ Problems with Chef/Puppet
 
 [chef's providers as an example: http://wiki.opscode.com/display/chef/Resources]
 Helpers
-- user
 - file [done]
 - directory [done]
 - package [done]
 - service (restart maybe?)
 - compile: tar/make/make install [done]
+- user
 - gem install
 - cron? (maybe leverage whenever)
 - env (manage adding things to .base_profile somehow - maybe leverage insert_into_file stuff?)
@@ -64,7 +64,39 @@ Some standards:
 
 #restart - should restart the service
 
+### Global config options
+We need a way for recipes to expose variables to other apps
+Maybe this should overlap with the global config
 
+
+### Configuration
+
+standard config options:
+git_repo_url
+web_root
+aws...
+s3...
+
+# exposed by unicorn for example
+app_server_locations ['localhost:3000', 'localhost:3001'] - gets picked up on by nginx maybe?
+
+
+
+TODO: Get rid of remote_server and make exec and run just work on remote
+TODO: Add a as_user('user') do .. end option
+				- have it run all commands as that user (for sftp actions we'll set the own after)
+				- we'll need to change exec and run to work from within a shell session
+					- maybe have an option to run from within a shell, or we could get them into the right place every time
+				- maybe we should add a system to "get you to root, then get you to another user"
+
+
+
+
+
+### Thor Modifications
+We make a few modifications to allow it to be used as the base to pawnee
+1) We make it so all actions can be run either locally or remotely via ssh through the thor-ssh gem
+2) We make options mutable and use that to allow the passing around of options
 
 
 

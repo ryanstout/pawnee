@@ -1,8 +1,11 @@
 require 'thor'
 
-module Pawnee
+module Pawnee  
   class CLI < Thor
     include Thor::Actions
+    
+    # Set blank namespace
+    namespace ''
 
 
     # Create a new gem (pulled from bundler and modified - MIT LICENSE)

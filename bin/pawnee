@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+require "rubygems"
+require "bundler/setup"
 require 'pawnee/cli'
-Pawnee::CLI.start
-  
+Bundler.require(:default)
+
+Pawnee::CLI.start(ARGV)
+
