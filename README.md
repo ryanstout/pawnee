@@ -24,16 +24,6 @@ This system will:
 	- and just overwrite it so files get copied to remote destinations if needed
 	
 	
-	
-TODO: Something like:
-
-in_group('group') do
-	in_user('user') do
-		...
-	end
-end
-
-TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions (example, git gem provides git actions)
 
 
 RECIPE:
@@ -58,6 +48,14 @@ Helpers
 - gem install
 - cron? (maybe leverage whenever)
 - env (manage adding things to .base_profile somehow - maybe leverage insert_into_file stuff?)
+
+
+
+### User class
+needs to have:
+fields: uid, gid, user, groups, comment, shell, password
+change tracking: to update
+
 
 
 Some standards:
@@ -88,6 +86,7 @@ TODO: Add a as_user('user') do .. end option
 				- we'll need to change exec and run to work from within a shell session
 					- maybe have an option to run from within a shell, or we could get them into the right place every time
 				- maybe we should add a system to "get you to root, then get you to another user"
+TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions (example, git gem provides git actions)
 
 
 

@@ -16,6 +16,10 @@ module Pawnee
     include ThorSsh::Actions
     include Pawnee::Actions
     
+    def initialize(*args)
+      super
+    end
+    
     desc "setup SERVER", 'setup on the destination server'
     # All recipies should subclass Pawnee::Base and implement setup to
     # install everything needed for the gem
@@ -68,15 +72,15 @@ module Pawnee
       end
       
       # Invokes all recipes that implement the passed in role
-      def invoke_roles(roles, server, options={})
+      def self.invoke_roles(server, roles, options={})
         # Check to make sure some recipes have been added
-        if self.class.recipes.is_a?(Array)
-          self.recipes.each do |recipe_class|
+        if recipes.is_a?(Array)
+          recipes.each do |recipe_class|
             role = recipe_class.instance_variable_get('@role').to_s
             
             if roles.include?(role)
               # This class matches the role, so we should run it
-              recipe = recipe_class.new({}, options)
+              recipe = recipe_class.new([], options)
               recipe.setup(server)
             end
           end

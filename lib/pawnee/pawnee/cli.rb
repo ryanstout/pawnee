@@ -7,6 +7,13 @@ module Pawnee
     # Set blank namespace
     namespace ''
 
+    desc "setup SERVER", "calls setup for each pawnee gem in bundler"
+    method_option :roles, :type => :array
+    def setup(server)
+      # Pawnee::Base.invoke_roles(server, options[:roles])
+      
+      Pawnee::Base.new.invoke(Pawnee::Nginx::Base, 'setup', [server], options)
+    end
 
     # Create a new gem (pulled from bundler and modified - MIT LICENSE)
     desc "gem GEM", "Creates a skeleton recipie"
