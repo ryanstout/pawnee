@@ -3,7 +3,7 @@ require 'pawnee/base'
 
 
 # NOTE: These are designed to run in order on vagrant
-describe Pawnee::Base do
+describe "package actions" do
   before do
     @base = Pawnee::Base.new
     @base.destination_connection = VagrantManager.connect
@@ -26,7 +26,7 @@ describe Pawnee::Base do
   
   it "should remove a package" do
     @base.remove_package('memcached')
-    @base.exec('which memcached').should == nil
+    @base.exec('which memcached').should == ''
   end
 
   it "should not try to re-remove a package" do

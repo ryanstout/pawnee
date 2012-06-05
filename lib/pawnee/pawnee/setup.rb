@@ -10,6 +10,7 @@ module Pawnee
 
     def self.setup(gem_name)
       # Setup the railtie
+      require "#{gem_name.gsub(/^pawnee[-]/, '')}/base"
       
       if defined?(Rails)
         puts "Setup: #{gem_name}"

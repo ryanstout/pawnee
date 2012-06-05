@@ -1,8 +1,10 @@
 require 'thor'
+require 'thor-ssh'
 
 module Pawnee  
   class CLI < Thor
     include Thor::Actions
+    include ThorSsh::Actions
     
     # Set blank namespace
     namespace ''

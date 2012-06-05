@@ -12,14 +12,46 @@ module Pawnee
     # === Parameters
     # url<String>:: The url to download
     # temp_dir<String>:: Where the compilation should take place
-    def compile(url, temp_dir)
+    # options<Hash>:: Hash of options, see below
+    #
+    # === Options
+    # #compile requires that you either specify a :bin_file option
+    # that the method can check for on the remote system, or that 
+    # you pass a block that returns true if the app has already been
+    # installed
+    #
+    # :bin_file   - the name of an executable that the method can check for in the path
+    # :configure  - a string of options to pass to the ./configure command.
+    #
+    # === Block
+    # You can also pass a block that if it returns true, it will not 
+    # recompile.  So the general idea is return true if the exe is already
+    # installed.
+    def compile(url, temp_dir, options={})
       # TODO: Add invoke/revoke support using action(...), maybe 
       # make things run via Thor::Group
-      Compile.new(self, url, temp_dir)
+      
+      installed = false
+      if options[:bin_file]
+        # Check if the bin file is installed
+        installed = exec(options[:bin_file]).strip != ''
+      else
+        raise "You must pass :bin_file or a block to compile" unless block_given?
+        installed = yield()
+      end
+      
+      if installed
+        say_status :already_compiled, url, :blue
+        return true
+      else
+        # Compile and install
+        Compile.new(self, url, temp_dir, options)
+      end
     end
     
     class Compile
       attr_accessor :base
+      attr_accessor :options
       
       # Sets up a compile object
       #
@@ -28,9 +60,10 @@ module Pawnee
       # url<String>:: The url to download from
       # temp_dir<String>:: A path to a temporary directory where the compilation 
       # can take place
-      def initialize(base, url, temp_dir)
+      def initialize(base, url, temp_dir, options)
         @base = base
         @temp_dir = temp_dir
+        self.options = options
         @file = File.basename(url)
         @zip_file = @file[/[.]zip$/]
         @file_path = File.join(temp_dir, @file)
@@ -88,7 +121,7 @@ module Pawnee
 
       # Runs ./configure on the files
       def configure
-        run_with_failure_handler("cd #{@extracted_path} ; ./configure", 'configure')
+        run_with_failure_handler("cd #{@extracted_path} ; ./configure #{options[:configure] || ''}", 'configure')
       end
       
       # Runs make

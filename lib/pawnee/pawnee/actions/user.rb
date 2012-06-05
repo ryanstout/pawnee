@@ -1,9 +1,13 @@
-require 'active_model'
+require 'pawnee/actions/base_model'
 
 module Pawnee
   module Actions
     def create_user(attributes)
-      User.new(self, attributes)
+      User.new(self, attributes).save
+    end
+    
+    def delete_user(login)
+      User.new(self, {:login => login}).destroy
     end
     
     
@@ -22,28 +26,17 @@ module Pawnee
     #   ruby -e "puts 'password'.crypt('passphrase')"
     #
     #
-    class User
-      include ActiveModel::Dirty
-
+    class User < BaseModel
       define_attribute_methods [:login, :uid, :gid, :groups, :comment, :shell, :password]
+      change_attr_accessor [:login, :uid, :gid, :groups, :comment, :shell, :password]
 
       attr_accessor :base
-      attr_accessor :new_record
-      
-      def new_record?
-        !!@new_record
-      end
-
-      def update_attributes(attributes)
-        attributes.each_pair do |key,value|
-          self.send(:"#{key}=", value) if self.respond_to?(:"#{key}=")
-        end
-      end
       
       def initialize(base, attributes)
         @base = base
         
         if attributes[:login]
+          self.login = attributes[:login]
           # Read the current attributes from the system
           read_from_system()
         end
@@ -52,15 +45,27 @@ module Pawnee
         update_attributes(attributes)
       end
       
+      def exec(*args)
+        return base.exec(*args)
+      end
+      
+      def run(*args)
+        return base.run(*args)
+      end
+      
       # Pull in the current (starting) state of the attributes 
       # for the User model
       def read_from_system
-        @uid, _, exit_code, _ = exec("id -u #{login}", true)
+        @uid, stderr, exit_code, _ = exec("id -u #{login}", true)
+        @uid = @uid.strip
         if exit_code == 0
           # The login exists, load in more data
-          @gid = exec("id -g #{login}")
+          @gid = exec("id -g #{login}").strip
           @groups = exec("groups #{login}").gsub(/^[^:]+[:]/, '').strip.split(/ /)
           self.new_record = false
+
+          # Reject any ones we just changed, so its as if we did a find with these
+          @changed_attributes = @changed_attributes.reject {|k,v| [:uid, :gid, :groups, :login].include?(k.to_sym) }
         else
           # No user
           @uid = nil
@@ -71,30 +76,40 @@ module Pawnee
       # Write any changes out
       def save
         if changed?
+          raise "A login must be specified" unless login
+          
           if new_record?
             # Just create a new user
             command = ["useradd"]
+            base.say_status :create_user, login
           else
             # Modify an existing user
             command = ["usermod"]
+            base.say_status :update_user, login
           end
           
           # Set options
           command << "-u #{uid}" if uid && uid_changed?
           command << "-g #{gid}" if gid && gid_changed?
           command << "-G #{groups.join(',')}" if groups && groups_changed?
-          command << "-c \"#{comment.inspect}\"" if comment && comment_changed?
-          command << "-s \"#{shell.inspect}\"" if shell && shell_changed?
-          command << "-p \"#{password.inspect}\"" if password && password_changed?
+          command << "-c #{comment.inspect}" if comment && comment_changed?
+          command << "-s #{shell.inspect}" if shell && shell_changed?
+          command << "-p #{password.inspect}" if password && password_changed?
           command << login
-
-          run(command.join(' '))
+          
+          base.as_root do
+            base.exec(command.join(' '))
+          end
+        else
+          base.say_status :user_exists, login, :blue
         end
       end
       
       def destroy
         self.new_record = true
-        run("userdel #{login}")
+        base.as_root do
+          base.exec("userdel #{login}")
+        end
       end
     end
   end
