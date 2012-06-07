@@ -2,7 +2,10 @@
 require "rubygems"
 require "bundler/setup"
 require 'pawnee/cli'
+# require 'pawnee/base'
 Bundler.require(:default)
 
+# Pawnee::Base.start(ARGV)
 Pawnee::CLI.start(ARGV)
+
 

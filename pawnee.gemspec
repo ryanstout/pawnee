@@ -14,11 +14,12 @@ Gem::Specification.new do |gem|
   gem.name          = "pawnee"
   gem.require_paths = ["lib/pawnee"]
   gem.add_runtime_dependency 'bundler'
-  gem.add_runtime_dependency 'thor', '~> 0.15.2'
+  gem.add_runtime_dependency 'thor', '>= 0.14.6'
   gem.add_runtime_dependency 'net-ssh', '= 2.2.2'
   gem.add_runtime_dependency 'net-sftp', '= 2.0.5'
   gem.add_runtime_dependency 'thor-ssh'
   gem.add_runtime_dependency 'activemodel', "~> 3.2.3"
+  gem.add_runtime_dependency 'activesupport', "~> 3.2.3"
   gem.add_development_dependency "turn"
   gem.add_development_dependency 'rspec', '~> 2.10'
   gem.add_development_dependency 'vagrant', '= 1.0.3'

@@ -1,20 +1,22 @@
+require 'pawnee/base'
 require 'thor'
 require 'thor-ssh'
 
-module Pawnee  
-  class CLI < Thor
-    include Thor::Actions
-    include ThorSsh::Actions
+# thor/group does not get correctly included in thor
+require 'thor/group'
+
+module Pawnee
+  class CLI < Pawnee::Base
+    # include Thor::Actions
+    # include ThorSsh::Actions
     
     # Set blank namespace
     namespace ''
 
-    desc "setup SERVER", "calls setup for each pawnee gem in bundler"
-    method_option :roles, :type => :array
-    def setup(server)
-      # Pawnee::Base.invoke_roles(server, options[:roles])
-      
-      Pawnee::Base.new.invoke(Pawnee::Nginx::Base, 'setup', [server], options)
+    desc "setup", "calls setup for each pawnee gem in bundler"
+    def setup
+      puts "Call setup"
+      Pawnee::Base.invoke_roles(:setup, :all)
     end
 
     # Create a new gem (pulled from bundler and modified - MIT LICENSE)

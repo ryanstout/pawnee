@@ -79,6 +79,7 @@ s3...
 app_server_locations ['localhost:3000', 'localhost:3001'] - gets picked up on by nginx maybe?
 
 
+TODO: We need to make CLI a subclass of base so it can show all of the options
 
 TODO: Get rid of remote_server and make exec and run just work on remote
 TODO: Add a as_user('user') do .. end option

@@ -1,5 +1,32 @@
 class Thor
   class Options
+    # Add the config options in as defaults first
+    def initialize(hash_options={}, defaults={})
+      defaults = Pawnee::Base.config_options.merge(defaults)
+
+      options = hash_options.values
+      super(options)
+
+      # Add defaults
+      defaults.each do |key, value|
+        @assigns[key.to_s] = value
+        @non_assigned_required.delete(hash_options[key])
+      end
+      
+      # Don't require server here, since it can come from servers
+      @non_assigned_required.delete(hash_options[:server])
+
+      @shorts, @switches, @extra = {}, {}, []
+
+      options.each do |option|
+        @switches[option.switch_name] = option
+
+        option.aliases.each do |short|
+          @shorts[short.to_s] ||= option.switch_name
+        end
+      end
+    end
+
     # Change the option parsing so it does not freeze the hash
     def parse(args)
       @pile = args.dup
