@@ -76,10 +76,10 @@ module Pawnee
               servers.each do |server|
                 # Only run on this server if the server supports the current recipe's
                 # role.
-                next unless server['roles'].include?(recipe_class.class_role)
+                next unless server.is_a?(String) || server['roles'].include?(recipe_class.class_role)
 
                 # Set the server for this call
-                recipe.server = server['domain']
+                recipe.server = server.is_a?(String) ? server : server['domain']
 
                 # Run the invoked task
                 recipe.send(task_name.to_sym)

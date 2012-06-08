@@ -10,12 +10,7 @@ module Pawnee
         end
       end
       
-      results = super(hash_options, defaults)
-
-      # Don't require server here, since it can come from servers
-      @non_assigned_required.delete(hash_options[:server])
-      
-      results
+      super(hash_options, defaults)
     end
 
     # Change the option parsing so it does not freeze the hash
