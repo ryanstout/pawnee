@@ -13,7 +13,8 @@ This system will:
   - so you just list the things you need on your server in a certain group (that only gets run on when installing)
   - you could use :path => '...'
   - the gems don't install the things in a bundle, just provide a task you can run to set them up
-4) It should run gems locally or remote (based on a config somehow)
+4) It should run gems locally or remote
+	- based on the --servers option passed in
 5) It should integrate with capistrano
 	- we need a place to store server info....
 		- redis somewhere?
@@ -22,12 +23,6 @@ This system will:
   - but deploying should be a separate thing (not like rubber)
 6) It should use thor for template stuff
 	- and just overwrite it so files get copied to remote destinations if needed
-	
-	
-
-
-RECIPE:
-#setup(destination_server='something.com')
 
 
 Problems with Chef/Puppet
@@ -46,30 +41,23 @@ Helpers
 - compile: tar/make/make install [done]
 - user
 - gem install
-- cron? (maybe leverage whenever)
+- cron? (maybe leverage whenever gem)
 - env (manage adding things to .base_profile somehow - maybe leverage insert_into_file stuff?)
 
+## Standard Tasks
+	- #restart
+	- #stop
+	- #start
 
 
-### User class
-needs to have:
-fields: uid, gid, user, groups, comment, shell, password
-change tracking: to update
-
-
-
-Some standards:
-
-#restart - should restart the service
-
-### Global config options
-We need a way for recipes to expose variables to other apps
-Maybe this should overlap with the global config
-
+### Options
+In a task, recipes can access and change the self.options hash.  These values will be
+passed from one task to another.
 
 ### Configuration
 
 standard config options:
+servers
 git_repo_url
 web_root
 aws...
@@ -79,9 +67,9 @@ s3...
 app_server_locations ['localhost:3000', 'localhost:3001'] - gets picked up on by nginx maybe?
 
 
-TODO: We need to make CLI a subclass of base so it can show all of the options
-
-TODO: Get rid of remote_server and make exec and run just work on remote
+TODO: Make it so adding in the options default doesn't change it for other thor instances
+TODO: Handle Roles
+TODO: Provide testing stubs for gems
 TODO: Add a as_user('user') do .. end option
 				- have it run all commands as that user (for sftp actions we'll set the own after)
 				- we'll need to change exec and run to work from within a shell session
@@ -155,3 +143,17 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+
+
+
+### Roles
+- gems define a roles they provide
+	- [logically, this can only be one role right?]
+	- multiple gems can provide the same role, but one gem can not provide multiple
+- you say which roles you want to run (as --roles)
+- servers say which roles they provide
+
+1) list of gems that run the listed roles
+2) run on each server that provides
+

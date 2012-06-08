@@ -5,6 +5,17 @@ describe Pawnee::Base do
     @base = Pawnee::Base.new
   end
   
+  # after(:all) do
+  #   puts "Clear after base"
+  #   Pawnee::Base.instance_variable_set('@recipes', nil)
+  #   Pawnee::Blue.instance_eval { remove_const :Base }
+  #   Pawnee.instance_eval { remove_const :Blue }
+  #   Pawnee::Red.instance_eval { remove_const :Base }
+  #   Pawnee.instance_eval { remove_const :Red }
+  #   Pawnee.instance_eval { remove_const :CLI }
+  #   require 'pawnee/cli'
+  # end
+  
   it "should respond to setup" do
     @base.should respond_to(:setup)
   end
@@ -37,11 +48,19 @@ describe Pawnee::Base do
     module Pawnee
       module Red
         class Base < Pawnee::Base
+          desc "setup", "setup"
+          def setup
+            puts "SETUP BLUE"
+          end
         end
       end
 
       module Blue
         class Base < Pawnee::Base
+          desc "setup", "setup"
+          def setup
+            puts "SETUP BLUE"
+          end
         end
       end
     end
@@ -61,4 +80,38 @@ describe Pawnee::Base do
   
     Pawnee::Base.ordered_recipes.should == [Pawnee::Red::Base, Pawnee::Blue::Base]
   end
+  
+  
+  it "should invoke roles based on the roles passed in" do
+    red = Pawnee::Red::Base.new([], {})
+    red.should_receive(:setup)
+    Pawnee::Red::Base.should_receive(:new).and_return(red)
+    
+    Pawnee::Blue::Base.should_not_receive(:new)
+    
+    Pawnee::Base.invoke_roles(:setup, ['red'])
+  end
+  
+  it "should invoke roles limiting to server roles" do
+    config_options = {
+      :servers => [
+        {'domain' => 'test1.com', 'roles' => ['red']},
+        {'domain' => 'test2.com', 'roles' => ['blue', 'red']}
+      ]
+    }
+    # Pawnee::Base.should_not_receive(:config_options)#.at_least(:once).and_return(config_options)
+
+    red = Pawnee::Red::Base.new([], {})
+    red.should_receive(:setup).twice
+    Pawnee::Red::Base.should_receive(:new).and_return(red)
+    
+    blue = Pawnee::Blue::Base.new([], {})
+    blue.should_receive(:setup).once
+    Pawnee::Blue::Base.should_receive(:new).and_return(blue)
+    
+    Pawnee::Base.invoke_roles(:setup, ['red', 'blue'], config_options)
+
+  end
+
+  
 end

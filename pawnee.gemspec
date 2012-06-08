@@ -26,5 +26,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'sahara', '>= 0.0.11'
   gem.add_development_dependency 'rake', '~> 0.9'
   gem.add_development_dependency 'rdoc', '~> 3.9'
+  gem.add_development_dependency 'simplecov', '~> 0.4'
   gem.version       = Pawnee::VERSION
 end

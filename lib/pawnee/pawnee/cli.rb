@@ -6,18 +6,27 @@ require 'thor-ssh'
 require 'thor/group'
 
 module Pawnee
-  class CLI < Pawnee::Base
-    # include Thor::Actions
-    # include ThorSsh::Actions
-    
+  class CLI < Pawnee::Base    
     # Set blank namespace
     namespace ''
 
     desc "setup", "calls setup for each pawnee gem in bundler"
-    def setup
-      puts "Call setup"
-      Pawnee::Base.invoke_roles(:setup, :all)
+    global_options do
+      method_option :roles, :type => :array, :default => :all
     end
+    def setup
+      Pawnee::Base.invoke_roles(:setup, self.options[:roles], self.options)
+    end
+
+
+    desc "teardown", "calls teardown for each pawnee gem in bundler"
+    global_options do
+      method_option :roles, :type => :array, :default => :all
+    end
+    def teardown
+      Pawnee::Base.invoke_roles(:setup, self.options[:roles], self.options)
+    end
+
 
     # Create a new gem (pulled from bundler and modified - MIT LICENSE)
     desc "gem GEM", "Creates a skeleton recipie"

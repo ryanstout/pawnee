@@ -2,11 +2,18 @@ class Thor
   class Options
     # Add the config options in as defaults first
     def initialize(hash_options={}, defaults={})
-      defaults = Pawnee::Base.config_options.merge(defaults)
-
+      # TODO: Add options to flatten from yaml
+      # defaults = Pawnee::Base.config_options.merge(defaults)
+      Pawnee::Base.config_options.each_pair do |key,value|
+        unless defaults[key]
+          defaults[key] = value
+        end
+      end
+      
       options = hash_options.values
+      
       super(options)
-
+      
       # Add defaults
       defaults.each do |key, value|
         @assigns[key.to_s] = value
@@ -15,12 +22,12 @@ class Thor
       
       # Don't require server here, since it can come from servers
       @non_assigned_required.delete(hash_options[:server])
-
+      
       @shorts, @switches, @extra = {}, {}, []
-
+      
       options.each do |option|
         @switches[option.switch_name] = option
-
+      
         option.aliases.each do |short|
           @shorts[short.to_s] ||= option.switch_name
         end
