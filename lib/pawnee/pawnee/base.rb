@@ -4,9 +4,10 @@ require "pawnee/version"
 require 'thor'
 require 'thor-ssh'
 require 'pawnee/actions'
-require 'pawnee/thor/parser/options'
+require 'pawnee/parser/options'
 require 'active_support/core_ext/hash/deep_merge'
 require 'pawnee/roles'
+require 'pawnee/invocation'
 
 module Pawnee
   # The pawnee gem provides the Pawnee::Base class, which includes actions
@@ -17,6 +18,7 @@ module Pawnee
     include Thor::Actions
     include ThorSsh::Actions
     include Pawnee::Actions
+    include Pawnee::Invocation
     include Roles
     
     attr_accessor :server
@@ -41,7 +43,54 @@ module Pawnee
     #                2) an Array of options to pass to Net::SSH.start
     #                3) a domain name for the first argument to Net::SSH.start
     def initialize(args=[], options={}, config={})
-      super
+      pawnee_setup_invocations(args, options, config)
+
+      pawnee_setup_actions(args, options, config) do
+        
+        # We need to change Thor::Options to use Pawnee::Options on 
+        # invoke so we can include the defaults from the config file,
+        # so here we copy in the initialize from thor/base.rb#initialize
+        parse_options = self.class.class_options
+      
+        # The start method splits inbound arguments at the first argument
+        # that looks like an option (starts with - or --). It then calls
+        # new, passing in the two halves of the arguments Array as the
+        # first two parameters.
+      
+        if options.is_a?(Array)
+          task_options  = config.delete(:task_options) # hook for start
+          parse_options = parse_options.merge(task_options) if task_options
+          array_options, hash_options = options, {}
+        else
+          # Handle the case where the class was explicitly instantiated
+          # with pre-parsed options.
+          array_options, hash_options = [], options
+        end
+      
+        # Let Thor::Options parse the options first, so it can remove
+        # declared options from the array. This will leave us with
+        # a list of arguments that weren't declared.
+        # --- We change Thor::Options to Pawnee::Options to pull in
+        # the config default's
+        opts = Pawnee::Options.new(parse_options, hash_options)
+        self.options = opts.parse(array_options)
+      
+        # If unknown options are disallowed, make sure that none of the
+        # remaining arguments looks like an option.
+        opts.check_unknown! if self.class.check_unknown_options?(config)
+      
+        # Add the remaining arguments from the options parser to the
+        # arguments passed in to initialize. Then remove any positional
+        # arguments declared using #argument (this is primarily used
+        # by Thor::Group). Tis will leave us with the remaining
+        # positional arguments.
+        thor_args = Thor::Arguments.new(self.class.arguments)
+        thor_args.parse(args + opts.remaining).each { |k,v| send("#{k}=", v) }
+        args = thor_args.remaining
+      
+        @args = args
+        #-- end copy from thor/base.rb#initialize
+      end
       
       # Setup the destination_connection for this instance
       if self.options[:server]
@@ -58,6 +107,7 @@ module Pawnee
         end
       end
     end
+    
     
     desc "setup", 'setup on the destination server'
     # All recipies should subclass Pawnee::Base and implement setup to
