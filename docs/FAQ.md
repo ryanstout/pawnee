@@ -20,4 +20,14 @@ Also, just for good measure, here's a few reasons why its worse:
 
 1) Only supports ubuntu (currently - the plan is to get the kinks worked out on ubuntu first)
 2) Fewer recipes (again, currently)
-3) 
+
+
+## Problems with Chef/Puppet
+
+[Note: this is my opinion]
+
+1. Little to no testing of recipes (at least for Chef)
+2. Complicated recipe upgrading/code reuse patterns
+3. You need to run the code locally (should have option to run over ssh)
+
+[chef's providers as an example: http://wiki.opscode.com/display/chef/Resources]
