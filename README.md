@@ -1,4 +1,6 @@
-# Pawnee
+# Pawnee - making server provisioning easier
+
+[NOTE: This is still a work in progress and not ready for use yet]
 
 This system will:
 
