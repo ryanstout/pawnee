@@ -1,3 +1,4 @@
+
 module Pawnee
   class Options < Thor::Options
 

@@ -50,7 +50,7 @@ describe Pawnee::Base do
         class Base < Pawnee::Base
           desc "setup", "setup"
           def setup
-            puts "SETUP BLUE"
+            puts "SETUP RED"
           end
         end
       end
@@ -93,24 +93,74 @@ describe Pawnee::Base do
   end
   
   it "should invoke roles limiting to server roles" do
+    # Say we have a config file setup like this
     config_options = {
-      :servers => [
+      'servers' => [
+        {'domain' => 'test1.com', 'roles' => ['red']}
+      ]
+    }
+
+    # But we want to pass in options with more domains
+    options = {
+      'servers' => [
         {'domain' => 'test1.com', 'roles' => ['red']},
         {'domain' => 'test2.com', 'roles' => ['blue', 'red']}
       ]
     }
-    # Pawnee::Base.should_not_receive(:config_options)#.at_least(:once).and_return(config_options)
 
-    red = Pawnee::Red::Base.new([], {})
+    Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(config_options)
+    
+    red = Pawnee::Red::Base.new([], options)
+    red.should_receive(:setup).twice
+    Pawnee::Red::Base.should_receive(:new).with([], options).and_return(red)
+    
+    blue = Pawnee::Blue::Base.new([], options)
+    blue.should_receive(:setup).once
+    Pawnee::Blue::Base.should_receive(:new).with([], options).and_return(blue)
+    
+    Pawnee::Base.invoke_roles(:setup, ['red', 'blue'], options)
+
+  end
+  
+  it "should invoke for each server when doing an individual recipe's setup task" do
+    options = {
+      'servers' => [
+        {'domain' => 'test1.com', 'roles' => ['red']},
+        {'domain' => 'test2.com', 'roles' => ['red']}
+      ]
+    }
+    
+    Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(options)
+    
+    red = Pawnee::Red::Base.new([], options)
     red.should_receive(:setup).twice
     Pawnee::Red::Base.should_receive(:new).and_return(red)
-    
-    blue = Pawnee::Blue::Base.new([], {})
-    blue.should_receive(:setup).once
-    Pawnee::Blue::Base.should_receive(:new).and_return(blue)
-    
-    Pawnee::Base.invoke_roles(:setup, ['red', 'blue'], config_options)
 
+    Pawnee::Blue::Base.should_not_receive(:new)
+    
+    Pawnee::CLI.start(['red', 'setup'])
+    
+  end
+  
+  it "should call all setup methods when called with setup from the command line" do
+    options = {
+      'servers' => [
+        {'domain' => 'test1.com', 'roles' => ['red']},
+        {'domain' => 'test2.com', 'roles' => ['red', 'blue']}
+      ]
+    }
+    
+    Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(options)
+    
+    red = Pawnee::Red::Base.new([], options)
+    red.should_receive(:setup).twice
+    Pawnee::Red::Base.should_receive(:new).and_return(red)
+
+    blue = Pawnee::Blue::Base.new([], options)
+    blue.should_receive(:setup).once
+    Pawnee::Blue::Base.should_receive(:new).with([], options).and_return(blue)
+    
+    Pawnee::CLI.start(['setup'])
   end
 
   

@@ -67,7 +67,6 @@ s3...
 app_server_locations ['localhost:3000', 'localhost:3001'] - gets picked up on by nginx maybe?
 
 
-TODO: Make it so adding in the options default doesn't change it for other thor instances
 TODO: Provide testing stubs for gems
 TODO: Add a as_user('user') do .. end option
 				- needs to look to options for how to get to root
@@ -76,12 +75,13 @@ TODO: Add a as_user('user') do .. end option
 					- maybe have an option to run from within a shell, or we could get them into the right place every time
 				- maybe we should add a system to "get you to root, then get you to another user"
 TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions (example, git gem provides git actions)
+TODO: Run actions in threads (across multiple servers)
+TODO: Test to make sure arguments work directly as well (they probably don't right now)
 
 
 
 
-
-### Thor Modifications
+### ThorSsh Extensions to Thor
 We make a few modifications to allow it to be used as the base to pawnee
 1) We make it so all actions can be run either locally or remotely via ssh through the thor-ssh gem
 2) We make options mutable and use that to allow the passing around of options

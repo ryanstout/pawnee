@@ -1,8 +1,8 @@
 require 'net/ssh'
-require "pawnee/setup"
-require "pawnee/version"
 require 'thor'
 require 'thor-ssh'
+require "pawnee/setup"
+require "pawnee/version"
 require 'pawnee/actions'
 require 'pawnee/parser/options'
 require 'active_support/core_ext/hash/deep_merge'
@@ -91,22 +91,8 @@ module Pawnee
         @args = args
         #-- end copy from thor/base.rb#initialize
       end
-      
-      # Setup the destination_connection for this instance
-      if self.options[:server]
-        server = self.options[:server]
-        
-        # Setup the connection based on the tye of option passed in
-        if server.is_a?(Net::SSH::Connection::Session)
-          self.destination_connection = server
-        elsif server.is_a?(Array)
-          self.destination_connection = Net::SSH.start(*server)
-        else
-          # TODO: add a way to pass in the user
-          self.destination_connection = Net::SSH.start(self.options[:server], 'ubuntu')
-        end
-      end
     end
+    
     
     
     desc "setup", 'setup on the destination server'
@@ -130,6 +116,46 @@ module Pawnee
     end
     
     no_tasks {
+      
+      # # Invoke the given task if the given args.
+      def invoke_task(task, *args) #:nodoc:
+        current = @_invocations[self.class]
+
+        unless current.include?(task.name)
+          current << task.name
+
+          # Setup the server connections before we run the task
+          servers = options[:servers] || options['servers']
+
+          if !servers || self.class == Pawnee::CLI
+            # No servers, just run locally
+            task.run(self, *args)
+          else
+            # Run the setup task, setting up the needed connections
+            servers.each do |server|
+              # Only run on this server if the server supports the current recipe's
+              # role.
+              next unless server.is_a?(String) || (server['roles'] && server['roles'].include?(self.class.class_role))
+
+              # Set the server for this call
+              self.server = server.is_a?(String) ? server : server['domain']
+
+              # Run the task
+              task.run(self, *args)
+
+              # Remove the server
+              self.server = nil
+
+              # Close the connection
+              if self.destination_connection
+                self.destination_connection.close
+                self.destination_connection = nil
+              end
+            end
+          end
+        end
+      end
+
       # Whenever say is used, also print out the server name
       def say(*args)
         text = args[0]

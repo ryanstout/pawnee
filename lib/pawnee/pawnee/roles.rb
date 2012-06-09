@@ -66,37 +66,11 @@ module Pawnee
             # This class matches the role, so we should run it
             recipe = recipe_class.new([], options)
 
-            servers = options[:servers] || options['servers']
+            task = recipe_class.tasks[task_name.to_s]
+            recipe.invoke_task(task)
             
-            unless servers
-              # No servers, just run locally
-              recipe.setup()
-            else
-              # Run the setup task, setting up the needed connections
-              servers.each do |server|
-                # Only run on this server if the server supports the current recipe's
-                # role.
-                next unless server.is_a?(String) || server['roles'].include?(recipe_class.class_role)
-
-                # Set the server for this call
-                recipe.server = server.is_a?(String) ? server : server['domain']
-
-                # Run the invoked task
-                recipe.send(task_name.to_sym)
-
-                # Remove the server
-                recipe.server = nil
-
-                # Copy back any updated options
-                options = recipe.options
-
-                # Close the connection
-                if recipe.destination_connection
-                  recipe.destination_connection.close
-                  recipe.destination_connection = nil
-                end
-              end
-            end
+            # Copy back and updated options
+            options = recipe.options
           end
         end
       end
