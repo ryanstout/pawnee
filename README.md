@@ -45,10 +45,10 @@ Setup a config/pawnee.yml file.  In this file you can specify any options you wa
 Here's an example config with server's:
 
 		servers:
-		  - domain: 44dates.com
+		  - domain: server1.com
 		    roles: [nginx, unicorn]
-		  - domain: exceptionhub.com
-		    roles: [nginx]
+		  - domain: server2.com
+		    roles: [unicorn]
 
 Then run:
 
