@@ -4,59 +4,68 @@
 
 This system will:
 
-1) Setup recipes as gems
+1. **Setup recipes as gems**
   - Gems get prefixed so you can search for them
-	- Gems inherit from main gem
-2) Gems recipes can be overridden in a rails folder
+  - Gems inherit from main gem
+2. **Gems recipes can be overridden in a rails folder**
 	- either by a load path solution or monkeypatching
 	  - they have a classname that can be predicted from the gem name
 			- so anything that overrides that class can monkeypatch or replace parts of it
-3) It should use bundler
+3. **It should use bundler**
   - so you just list the things you need on your server in a certain group (that only gets run on when installing)
   - you could use :path => '...'
   - the gems don't install the things in a bundle, just provide a task you can run to set them up
-4) It should run gems locally or remote
+4. **It should run gems locally or remote**
 	- based on the --servers option passed in
-5) It should integrate with capistrano
+5. **It should integrate with capistrano**
 	- we need a place to store server info....
 		- redis somewhere?
 		- Serverfile/Serverfile.lock
   - the servers and roles should be maintained by this system
   - but deploying should be a separate thing (not like rubber)
-6) It should use thor for template stuff
+6. **It should use thor for template stuff**
 	- and just overwrite it so files get copied to remote destinations if needed
 
 
-Problems with Chef/Puppet
--------------------------
+## Problems with Chef/Puppet
 
-1) Little to no testing of recipes (at least for Chef)
-2) Complicated recipe upgrading/code reuse patterns
-3) You need to run the code locally (should be over ssh)
+[Note: this is my opinion]
+
+1. Little to no testing of recipes (at least for Chef)
+2. Complicated recipe upgrading/code reuse patterns
+3. You need to run the code locally (should have option to run over ssh)
 
 [chef's providers as an example: http://wiki.opscode.com/display/chef/Resources]
-Helpers
-- file [done]
-- directory [done]
-- package [done]
-- service (restart maybe?)
-- compile: tar/make/make install [done]
-- user
-- gem install
-- cron? (maybe leverage whenever gem)
-- env (manage adding things to .base_profile somehow - maybe leverage insert_into_file stuff?)
+
+## Pawnee Provides Helpers For:
+
+- files
+- directories
+- packages
+- service calls (via invoking methods in other recipes)
+- compile (untar/make/make install)
+- users
+- cron? [not complete]  (maybe leverage whenever gem)
+- env [not complete]  (manage adding things to .base_profile somehow - maybe leverage insert_into_file stuff?)
 
 ## Standard Tasks
+
+Pawnee defined some convention for task names so all gem's can provide standard ways to call things
+
+	- #setup
+	- #teardown
 	- #restart
 	- #stop
 	- #start
 
 
-### Options
-In a task, recipes can access and change the self.options hash.  These values will be
-passed from one task to another.
+## Options
 
-### Configuration
+In a task, recipes can access and change the self.options hash.  These values will be
+passed from one task to another.  Gem tasks will be executed in the order they are defined
+in bundler (at the moment, this may change)
+
+## Configuration
 
 standard config options:
 servers
