@@ -59,7 +59,9 @@ Or they can be setup in the [config.yml file](https://github.com/ryanstout/pawne
 
 ## Actions
 
-Since Pawnee is build on thor, we can use any of the [thor actions](https://github.com/wycats/thor/wiki/Actions) inside our class.  Pawnee includes a gem called thor-ssh (which was written for pawnee) that extends thor and allows a .destination_connection to be set on any thor class.  .destination_connection is automatically setup for any task if the servers option is set (again, either from the command line or in the config.yml file)  When destination_connection is set, any of the actions will use the local machine for the source, and the destination machine for the destination.
+### Thor Actions
+
+Since Pawnee is build on thor, we can use any of the [thor actions](https://github.com/wycats/thor/wiki/Actions) inside our class.  Pawnee includes a gem called thor-ssh (which was written for pawnee) that extends thor and allows a .destination_connection to be set on any thor class.  .destination_connection is automatically setup for any task if the 'servers' option is set (again, either from the command line or in the config.yml file)  When destination_connection is set, any of the actions will use the local machine for the source, and the destination machine for the destination.
 
 So running something like the following:
 
@@ -75,3 +77,26 @@ thor-ssh also provides two methods for running any command:
 
  #run will log the command being run, #exec will not
 
+### Pawnee Actions
+
+Pawnee also provides its own set of actions for common server tasks.
+
+install_package, remove_package, compile, create_user, delete_user
+
+## Options
+
+Pawnee also uses thor's option system.  This means your tasks should use thor's #desc and #method_option.  ([Read more here](https://github.com/wycats/thor/wiki/Getting-Started) and [here](https://github.com/wycats/thor/wiki/Method-Options))  This allows for an easily defined set of options for any task.  This also allows anyone to see what options the tasks take:
+
+		bundle exec pawnee [yourgemname] help setup
+		
+^ would return a list of the options along with descriptions
+
+By default pawnee makes it so any method options are scoped to the current gem.  However pawnee makes it easy for gems to share options.  Any gem can change the self.options hash and it will be passed (in its changed form) to the next task.  This means you could easily have one gem provide things like path to another gem.  (Just make sure the gem providing the paths is before the 2nd gem in the Gemfile).  When sharing options, some options make since to not be scoped to the gem.  In this case, you can run the #method_options inside of a global_options do block.
+
+		global_options do
+			method_option :deploy_path, :required => true
+		end
+
+This makes it easy to have the same option be used between gems.
+
+	
