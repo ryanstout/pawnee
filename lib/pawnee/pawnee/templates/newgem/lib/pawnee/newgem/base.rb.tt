@@ -7,8 +7,7 @@ require 'pawnee/base'
 <%- j = config[:constant_array].size -%>
 <%= '  '*j %>class Base < Pawnee::Base
 <%= '  '*j %>  global_options do
-<%= '  '*j %>    method_option :servers, :type => :array
-<%= '  '*j %>    method_option :server, :required => true
+<%= '  '*j %>    method_option :servers, :type => :array, :required => true
 <%= '  '*j %>  end
 <%= '  '*j %>  desc "setup", 'setup on the destination server'
 <%= '  '*j %>  def setup
@@ -16,8 +15,7 @@ require 'pawnee/base'
 <%= '  '*j %>  end
 <%= '  '*j %>  
 <%= '  '*j %>  global_options do
-<%= '  '*j %>    method_option :servers, :type => :array
-<%= '  '*j %>    method_option :server, :required => true
+<%= '  '*j %>    method_option :servers, :type => :array, :required => true
 <%= '  '*j %>  end
 <%= '  '*j %>  desc "teardown", 'teardown on the destination server'
 <%= '  '*j %>  def teardown

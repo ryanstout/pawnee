@@ -40,6 +40,14 @@ Add any pawnee gem's you want to use to bundler:
 
     gem 'pawnee-nginx'
 
+You can see currently available recipe gems [here](https://rubygems.org/search?utf8=%E2%9C%93&query=pawnee)
+
+[Or you can create your own recipy gems](https://github.com/ryanstout/pawnee/blob/master/docs/GUIDE.md)
+
+## Usage
+
+### Config File
+
 Setup a config/pawnee.yml file.  In this file you can specify any options you want to pass along with the servers:
 
 Here's an example config with server's:
@@ -53,11 +61,6 @@ Here's an example config with server's:
 Then run:
 
 		bundle exec pawnee setup
-
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Contributing
 
