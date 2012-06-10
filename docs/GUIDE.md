@@ -40,7 +40,7 @@ Again, this will invoke the setup task on all pawnee gems in the Gemfile.
 
 Tasks can call other tasks using the #invoke method (see thor)
 
-## Server Options
+## Servers Option
 
 We'll come back to options in a minute, but quickly we have to talk about one special option, 'servers'.  'servers' should be setup as a default option on your setup and teardown tasks.
 
@@ -55,8 +55,23 @@ These options can either be passed in on the command line like so:
 
 		bundle exec pawnee yourgemname setup --servers something.com
 
-Or they can be setup in the [config.yml file]().
+Or they can be setup in the [config.yml file](https://github.com/ryanstout/pawnee#config-file).
 
 ## Actions
 
-Since Pawnee is build on thor, we can use any of the thor actions
+Since Pawnee is build on thor, we can use any of the [thor actions](https://github.com/wycats/thor/wiki/Actions) inside our class.  Pawnee includes a gem called thor-ssh (which was written for pawnee) that extends thor and allows a .destination_connection to be set on any thor class.  .destination_connection is automatically setup for any task if the servers option is set (again, either from the command line or in the config.yml file)  When destination_connection is set, any of the actions will use the local machine for the source, and the destination machine for the destination.
+
+So running something like the following:
+
+		copy_file('templates/test.txt', '/home/ubuntu/test.txt')
+
+Would copy the file from templates/test.txt (in the gem) to /home/ubuntu/test.txt on the remote server (or servers if multiple servers were passed in)
+
+**note**: in the current system, if multiple servers are passed in, the task is simply run once for each server.
+
+thor-ssh also provides two methods for running any command:
+
+ #run and #exec
+
+ #run will log the command being run, #exec will not
+
