@@ -4,8 +4,8 @@ require File.expand_path('../lib/pawnee/pawnee/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Ryan Stout"]
   gem.email         = ["ryanstout@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Pawnee attempts to build a better server provisioning system}
+  gem.summary       = %q{Better server provisioing}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
