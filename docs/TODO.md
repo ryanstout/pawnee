@@ -8,3 +8,17 @@ TODO: Add a as_user('user') do .. end option
 TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions (example, git gem provides git actions)
 TODO: Run actions in threads (across multiple servers)
 TODO: Test to make sure arguments work directly as well (they probably don't right now)
+TODO: System to check for and register updates/modifications
+
+
+def setup
+	install_package('build-essential')
+	
+	modify_block do
+		install_package('nginx')
+
+		if modified?
+			invoke Pawnee::Nginx::Base restart
+		end
+	end
+end

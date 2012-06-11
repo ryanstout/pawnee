@@ -6,7 +6,7 @@ Pawnee tries to make it very easy to create recipes for setting up things on rem
 
 		pawnee gem [gemname]
 
-This will generate files for a gem in the current directory.  The word Recipe is used to refer to these pawnee gems (since it is a standard term in the provisioning world.)
+This will generate files for a gem in the current directory.  All pawnee gems will be automatically prefixed with pawnee- so that they can be easily identified.  The word Recipe is used to refer to these pawnee gems (since it is a standard term in the provisioning world.)
 
 ## base.rb
 
@@ -82,6 +82,8 @@ thor-ssh also provides two methods for running any command:
 Pawnee also provides its own set of actions for common server tasks.
 
 install_package, remove_package, compile, create_user, delete_user
+
+For more info see [the docs on pawnee actions](...)
 
 ## Options
 

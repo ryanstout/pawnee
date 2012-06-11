@@ -33,6 +33,7 @@ This system will:
 	- and just overwrite it so files get copied to remote destinations if needed
 
 
+A note on idempotence.  Being idempotent is a big selling point for chef.  Pawnee strives for idempotence but provides it in different ways.  For example, where chef would provide a more dsl like way to declare what to do when changes are made, pawnee tries to avoid too much DSL, so the recipe developer will need to be aware that the task may be run multiple times.  We find that either way the recipe developer needs to understand this situation, and with the Pawnee way, its made clearer in the code.
 
 ## Installation
 

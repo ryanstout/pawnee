@@ -33,7 +33,7 @@ describe Pawnee::Base do
   end
   
 
-  class Dep
+  class Dep #:nodoc:
     attr_accessor :name
     
     def initialize(name)
@@ -45,9 +45,9 @@ describe Pawnee::Base do
     Pawnee::Base.recipes.should == nil
 
     # These will persist between tests
-    module Pawnee
-      module Red
-        class Base < Pawnee::Base
+    module Pawnee #:nodoc:
+      module Red #:nodoc:
+        class Base < Pawnee::Base #:nodoc:
           desc "setup", "setup"
           def setup
             puts "SETUP RED"
@@ -55,8 +55,8 @@ describe Pawnee::Base do
         end
       end
 
-      module Blue
-        class Base < Pawnee::Base
+      module Blue #:nodoc:
+        class Base < Pawnee::Base #:nodoc:
           desc "setup", "setup"
           def setup
             puts "SETUP BLUE"

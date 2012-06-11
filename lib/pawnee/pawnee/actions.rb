@@ -10,7 +10,7 @@ module Pawnee
     # This is copied in from thor/actions.rb#initialize, 
     # we can't extend from a module, so we just move this setup
     # to a method
-    def pawnee_setup_actions(args=[], options={}, config={})
+    def pawnee_setup_actions(args=[], options={}, config={}) #:nodoc:
       self.behavior = case config[:behavior].to_s
         when "force", "skip"
           _cleanup_options_and_set(options, config[:behavior])

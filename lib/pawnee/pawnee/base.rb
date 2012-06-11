@@ -23,8 +23,7 @@ module Pawnee
     
     attr_accessor :server
     
-    # Calls the thor initializers, then if :server is passed in as 
-    # an option, it will set it up
+    # Creates an instance of the pawnee recipe
     #
     # ==== Parameters
     # args<Array[Object]>:: An array of objects. The objects are applied to their
@@ -97,8 +96,8 @@ module Pawnee
     
     desc "setup", 'setup on the destination server'
     # All recipies should subclass Pawnee::Base and implement setup to
-    # install everything needed for the gem
-    # setup should be able to be called multiple times
+    # install everything needed for the gem.
+    # Setup should be able to be called multiple times
     def setup
       raise 'this gem does not implement the setup method'
     end
@@ -112,7 +111,7 @@ module Pawnee
 
     # Guess the gem name based on the class name
     def self.gem_name
-      self.name.gsub(/[:][:][^:]+$/, '').gsub(/^[^:]+[:][:]/, '').gsub('::', '-').downcase
+      self.name.gsub(/[:][:]Base$/, '').gsub(/^[^:]+[:][:]/, '').gsub('::', '-').downcase
     end
     
     no_tasks {
@@ -127,7 +126,11 @@ module Pawnee
           # Setup the server connections before we run the task
           servers = options[:servers] || options['servers']
 
-          if !servers || self.class == Pawnee::CLI
+          # Don't run multiple times if:
+          # 1. they don't have any servers (then run locally)
+          # 2. the call is coming from the main CLI
+          # 3. they are calling a help task
+          if !servers || self.class == Pawnee::CLI || task.name == 'help'
             # No servers, just run locally
             task.run(self, *args)
           else
