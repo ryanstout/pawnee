@@ -8,4 +8,18 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
-task :default => :test
+
+require 'rspec/core/rake_task'
+
+desc 'Default: run specs.'
+task :default => :spec
+
+desc "Run specs"
+RSpec::Core::RakeTask.new do |t|
+  # t.pattern = "./spec/**/*_spec.rb"
+  t.pattern = "./spec/base_spec.rb"
+end
+
+puts ENV.inspect
+
+# task :default => :test
