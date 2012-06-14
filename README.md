@@ -111,7 +111,7 @@ standard config options:
 - aws...
 - s3...
 
-## exposed by unicorn for example
+### exposed by unicorn for example
 app_server_locations ['localhost:3000', 'localhost:3001'] - gets picked up on by nginx maybe?
 
 
