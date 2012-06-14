@@ -16,10 +16,16 @@ task :default => :spec
 
 desc "Run specs"
 RSpec::Core::RakeTask.new do |t|
-  # t.pattern = "./spec/**/*_spec.rb"
-  t.pattern = "./spec/base_spec.rb"
+  if ENV['TRAVIS']
+    # Unfortunately we can't run vagrant on travis, 
+    # so this limits us quite a bit on what tests 
+    # we can run
+    t.pattern = "./spec/base_spec.rb"
+  else
+    t.pattern = "./spec/**/*_spec.rb"
+  end
 end
 
-puts ENV.inspect
+# ENV['TRAVIS']
 
 # task :default => :test
