@@ -42,6 +42,7 @@ describe Pawnee::Base do
   end
   
   it "should have no recipes before they are defined, but should add them after they are defined" do
+    Pawnee::Base.instance_variable_set('@recipes', nil)
     Pawnee::Base.recipes.should == nil
 
     # These will persist between tests

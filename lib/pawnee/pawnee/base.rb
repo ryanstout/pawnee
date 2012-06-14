@@ -8,6 +8,7 @@ require 'pawnee/parser/options'
 require 'active_support/core_ext/hash/deep_merge'
 require 'pawnee/roles'
 require 'pawnee/invocation'
+require 'pawnee/modified'
 
 module Pawnee
   # The pawnee gem provides the Pawnee::Base class, which includes actions
@@ -19,6 +20,7 @@ module Pawnee
     include ThorSsh::Actions
     include Pawnee::Actions
     include Pawnee::Invocation
+    include Pawnee::Modified
     include Roles
     
     attr_accessor :server
