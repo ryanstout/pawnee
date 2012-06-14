@@ -1,3 +1,6 @@
+[![Build Status](https://secure.travis-ci.org/ryanstout/pawnee.png?branch=master)](http://travis-ci.org/ryanstout/pawnee)
+
+
 # Pawnee - making server provisioning easier
 
 [NOTE: This is still a work in progress and not ready for use yet]

@@ -14,5 +14,15 @@ Gem::Specification.new do |gem|
   gem.name          = "pawnee-<%=config[:name]%>"
   gem.require_paths = ["lib/pawnee"]
   gem.add_runtime_dependency 'pawnee'
+
+  # Pawnee development dependencies - versions for these will
+  # be pulled from the main pawnee gem
+  gem.add_development_dependency 'turn'
+  gem.add_development_dependency 'rspec'
+  gem.add_development_dependency 'vagrant'
+  gem.add_development_dependency 'sahara'
+  gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'rdoc'
+  
   gem.version       = <%=config[:constant_name]%>::VERSION
 end

@@ -20,6 +20,32 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+
+## Running Tests
+
+The test run through vagrant, which seemed logical since we want to test ssh stuff.
+
+### Install a box (first time only)
+		cd spec/vagrant
+		bundle exec vagrant box add ubuntu11 http://timhuegdon.com/vagrant-boxes/ubuntu-11.10.box
+		bundle exec vagrant init ubuntu11
+		
+		# enable the sandbox and create a commit we can rollback to
+		bundle exec vagrant sandbox on
+		bundle exec vagrant sandbox commit
+
+### Start box
+		vagrant up
+
+### Run the tests
+		cd ../..
+		bundle exec rspec
+		
+### When you're done
+		cd spec/vagrant
+		vagrant halt
+
+
 ## Contributing
 
 1. Fork it
