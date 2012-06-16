@@ -110,6 +110,7 @@ describe Pawnee::Base do
     }
 
     Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(config_options)
+    Net::SSH.should_receive(:start).any_number_of_times
     
     red = Pawnee::Red::Base.new([], options)
     red.should_receive(:setup).twice
@@ -118,6 +119,7 @@ describe Pawnee::Base do
     blue = Pawnee::Blue::Base.new([], options)
     blue.should_receive(:setup).once
     Pawnee::Blue::Base.should_receive(:new).with([], options).and_return(blue)
+    
     
     Pawnee::Base.invoke_roles(:setup, ['red', 'blue'], options)
 
@@ -132,6 +134,7 @@ describe Pawnee::Base do
     }
     
     Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(options)
+    Net::SSH.should_receive(:start).any_number_of_times
     
     red = Pawnee::Red::Base.new([], options)
     red.should_receive(:setup).twice
@@ -152,6 +155,7 @@ describe Pawnee::Base do
     }
     
     Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(options)
+    Net::SSH.should_receive(:start).any_number_of_times
     
     red = Pawnee::Red::Base.new([], options)
     red.should_receive(:setup).twice

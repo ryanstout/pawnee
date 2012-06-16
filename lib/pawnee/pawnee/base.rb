@@ -140,10 +140,22 @@ module Pawnee
             servers.each do |server|
               # Only run on this server if the server supports the current recipe's
               # role.
-              next unless server.is_a?(String) || (server['roles'] && server['roles'].include?(self.class.class_role))
+              next unless server.is_a?(String) || server.is_a?(Net::SSH::Connection::Session) || (server['roles'] && server['roles'].include?(self.class.class_role))
 
               # Set the server for this call
               self.server = server.is_a?(String) ? server : server['domain']
+
+              # Setup the connection to the server
+              if server.is_a?(Net::SSH::Connection::Session)
+                self.destination_connection = server
+              elsif server.is_a?(String)
+                # Server name is a string, asume ubuntu
+                self.destination_connection = Net::SSH.start(server, 'ubuntu')
+              else
+                # Server is a hash
+                self.destination_connection = Net::SSH.start(server['domain'], server['user'] || 'ubuntu')
+              end
+              
 
               # Run the task
               task.run(self, *args)
