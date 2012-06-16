@@ -142,18 +142,18 @@ module Pawnee
               # role.
               next unless server.is_a?(String) || server.is_a?(Net::SSH::Connection::Session) || (server['roles'] && server['roles'].include?(self.class.class_role))
 
-              # Set the server for this call
-              self.server = server.is_a?(String) ? server : server['domain']
-
               # Setup the connection to the server
               if server.is_a?(Net::SSH::Connection::Session)
                 self.destination_connection = server
+                self.server = server.host
               elsif server.is_a?(String)
                 # Server name is a string, asume ubuntu
                 self.destination_connection = Net::SSH.start(server, 'ubuntu')
+                self.server = server
               else
                 # Server is a hash
                 self.destination_connection = Net::SSH.start(server['domain'], server['user'] || 'ubuntu')
+                self.server = server['domain']
               end
               
 
@@ -165,7 +165,9 @@ module Pawnee
 
               # Close the connection
               if self.destination_connection
-                self.destination_connection.close
+                # Close the conection only if we created it.  If it was passed in as a connection
+                # then the creator is responsible for closing it
+                self.destination_connection.close unless server.is_a?(Net::SSH::Connection::Session)
                 self.destination_connection = nil
               end
             end

@@ -9,6 +9,7 @@ TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions 
 TODO: Run actions in threads (across multiple servers)
 TODO: Test to make sure arguments work directly as well (they probably don't right now)
 TODO: System to check for and register updates/modifications
+TODO: Add apt-get update to package stuff
 
 
 def setup

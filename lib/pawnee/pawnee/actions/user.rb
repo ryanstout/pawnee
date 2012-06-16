@@ -2,6 +2,19 @@ require 'pawnee/actions/base_model'
 
 module Pawnee
   module Actions
+    # Adds the user (specified by login) to the group
+    def add_user_to_group(login, group)
+      user = self.user(login)
+      user.groups << group
+      user.groups = user.groups.sort.uniq
+      user.save
+    end
+    
+    # Return the user object for the login
+    def user(login)
+      return User.new(self, {:login => login})
+    end
+    
     def create_user(attributes)
       User.new(self, attributes).save
     end
@@ -61,7 +74,7 @@ module Pawnee
         if exit_code == 0
           # The login exists, load in more data
           @gid = exec("id -g #{login}").strip
-          @groups = exec("groups #{login}").gsub(/^[^:]+[:]/, '').strip.split(/ /)
+          @groups = exec("groups #{login}").gsub(/^[^:]+[:]/, '').strip.split(/ /).sort
           self.new_record = false
 
           # Reject any ones we just changed, so its as if we did a find with these
