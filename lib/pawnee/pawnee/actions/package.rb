@@ -74,8 +74,33 @@ module Pawnee
     # === Parameters
     # packages<Array>:: An array of strings of package names
     def install_packages(*package_names)
+      packages = nil
+      as_root do
+        exec('apt-get -y update')
+        packages = exec("dpkg -l")
+      end
+      
+      installed_package_names = []
+      packages.split(/\n/).grep(/^ii /).each do |package|
+        _, name, version = package.split(/\s+/)
+        installed_package_names << name
+      end
+
+      need_to_install_packages = []
+      
       package_names.flatten.each do |package_name|
-        install_package(package_name)
+        if installed_package_names.include?(package_name)
+          say_status "package already installed", package_name, :blue
+        else
+          need_to_install_packages << package_name
+        end
+      end
+      
+      if need_to_install_packages.size > 0
+        as_root do
+          say_status "installing packages", need_to_install_packages.join(', ')
+          exec("apt-get -y install #{need_to_install_packages.join(' ')}")
+        end
       end
     end
     
