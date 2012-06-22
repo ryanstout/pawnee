@@ -9,5 +9,6 @@ module Pawnee
       @_invocations = config[:invocations] || Hash.new { |h,k| h[k] = [] }
       @_initializer = [ args, options, config ]
     end
+
   end
 end

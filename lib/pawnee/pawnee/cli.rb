@@ -55,10 +55,11 @@ module Pawnee
       template(File.join("newgem/README.md.tt"),             File.join(target, "README.md"),              opts)
       template(File.join("newgem/gitignore.tt"),             File.join(target, ".gitignore"),             opts)
       template(File.join("newgem/newgem.gemspec.tt"),        File.join(target, "#{name}.gemspec"),        opts)
-      template(File.join("newgem/lib/pawnee/newgem.rb.tt"),  File.join(target, "lib/pawnee/#{name}.rb"),         opts)
+      template(File.join("newgem/lib/newgem.rb.tt"),  File.join(target, "lib/#{name}.rb"),         opts)
       template(File.join("newgem/lib/pawnee/newgem/version.rb.tt"), File.join(target, "lib/#{folder_name}/version.rb"), opts)
       template(File.join("newgem/lib/pawnee/newgem/base.rb.tt"), File.join(target, "lib/#{folder_name}/base.rb"), opts)
       template(File.join("newgem/spec/spec_helper.rb.tt"),   File.join(target, "spec/spec_helper.rb"), opts)
+      template(File.join("newgem/spec/base_spec.rb.tt"),   File.join(target, "spec/base_spec.rb"), opts)
       template(File.join("newgem/spec/vagrant/Vagrantfile.tt"),     File.join(target, "spec/vagrant/Vagrantfile"), opts)
       template(File.join("newgem/spec/vagrant/vagrant.rb.tt"),      File.join(target, "spec/vagrant/vagrant.rb"), opts)
       if options[:bin]

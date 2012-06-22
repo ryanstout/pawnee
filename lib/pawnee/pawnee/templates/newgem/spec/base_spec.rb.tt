@@ -1,0 +1,12 @@
+require 'spec_helper'
+require 'pawnee/<%=config[:name]%>/base'
+
+describe Pawnee::<%=config[:name].capitalize %>::Base do
+  it "should install <%=config[:name]%>" do
+    connection = VagrantManager.connect
+    
+    Pawnee::Base.invoke_roles(:setup, ['<%=config[:name]%>'], {:servers => [connection], :roles => ['<%=config[:name]%>']})
+    
+    connection.close unless connection.closed?
+  end
+end

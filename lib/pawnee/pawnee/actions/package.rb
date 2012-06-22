@@ -59,8 +59,9 @@ module Pawnee
         say_status "package already installed", package_name
       else
         package_name = "#{package_name}=#{version}" if version
+        track_modification!
         as_root do
-          exec("apt-get -y install #{package_name}")
+          exec("DEBIAN_FRONTEND=noninteractive apt-get -q -y install #{package_name}")
         end
         say_status "installed package", package_name.gsub('=', ' ')
       end
@@ -76,7 +77,7 @@ module Pawnee
     def install_packages(*package_names)
       packages = nil
       as_root do
-        exec('apt-get -y update')
+        exec('DEBIAN_FRONTEND=noninteractive apt-get -q -y update')
         packages = exec("dpkg -l")
       end
       
@@ -97,9 +98,10 @@ module Pawnee
       end
       
       if need_to_install_packages.size > 0
+        track_modification!
         as_root do
           say_status "installing packages", need_to_install_packages.join(', ')
-          exec("apt-get -y install #{need_to_install_packages.join(' ')}")
+          exec("DEBIAN_FRONTEND=noninteractive apt-get -q -y install #{need_to_install_packages.join(' ')}")
         end
       end
     end
@@ -112,7 +114,7 @@ module Pawnee
       if package_installed?(package_name)
         say_status "removed package", package_name
         as_root do
-          exec("apt-get -y remove #{package_name}")
+          exec("DEBIAN_FRONTEND=noninteractive apt-get -q -y remove #{package_name}")
         end
       else
         say_status "package not removed", package_name

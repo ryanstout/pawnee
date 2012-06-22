@@ -1,4 +1,4 @@
-require "<%= config[:name] %>/version"
+require "pawnee/<%= config[:name] %>/version"
 require 'pawnee/base'
 
 <%- config[:constant_array].each_with_index do |c,i| -%>

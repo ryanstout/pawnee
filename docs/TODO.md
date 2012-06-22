@@ -9,7 +9,10 @@ TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions 
 TODO: Run actions in threads (across multiple servers)
 TODO: Test to make sure arguments work directly as well (they probably don't right now)
 TODO: System to check for and register updates/modifications
-TODO: Add apt-get update to package stuff
+TODO: Add apt-get update to package stuff - make it only run update once per all jobs
+TODO: Make it so copied files can be overridden in a rails project
+TODO: Track modified on compile?
+TODO: Should setup self.source_root to point to the templates dir in the gem 
 
 
 def setup

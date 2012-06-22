@@ -9,6 +9,7 @@ require 'active_support/core_ext/hash/deep_merge'
 require 'pawnee/roles'
 require 'pawnee/invocation'
 require 'pawnee/modified'
+require 'pawnee/ssh_connection'
 
 module Pawnee
   # The pawnee gem provides the Pawnee::Base class, which includes actions
@@ -21,6 +22,7 @@ module Pawnee
     include Pawnee::Actions
     include Pawnee::Invocation
     include Pawnee::Modified
+    include Pawnee::SshConnection
     include Roles
     
     attr_accessor :server
@@ -122,6 +124,10 @@ module Pawnee
       def invoke_task(task, *args) #:nodoc:
         current = @_invocations[self.class]
 
+        # Default force for actions in options
+        # TODO: Should this get set in invoke?
+        options[:force] ||= true
+
         unless current.include?(task.name)
           current << task.name
 
@@ -178,8 +184,14 @@ module Pawnee
       # Whenever say is used, also print out the server name
       def say(*args)
         text = args[0]
-        text = "[#{server}]:\t" + text
+        text = "[#{server}]:\t" + text.to_s
         super(text, *args[1..-1])
+      end
+      
+      def say_status(*args)
+        text = args[0]
+        text = "[#{server}]:\t" + text.to_s
+        super(text, *args[1..-1])        
       end
     }
     
@@ -220,7 +232,7 @@ module Pawnee
         super(subclass)
         
         # Make sure cli has been loaded at this point
-        require 'pawnee/cli'
+        require 'pawnee/cli' unless defined?(Pawnee) && defined?(Pawnee::CLI)
         
         # Skip the main CLI class
         return if subclass == Pawnee::CLI
@@ -239,6 +251,7 @@ module Pawnee
         # Assign the default role (can be overridden by 'role :something' in the class)
         subclass.role(class_name)
       end
+      
       
       def self.recipes
         @recipes
@@ -270,6 +283,8 @@ module Pawnee
       # tracked as tasks by invoking the create_task method.
       def self.method_added(meth)
         super
+        
+        require 'pawnee/cli' unless defined?(Pawnee) && defined?(Pawnee::CLI)
         
         # Take all of the setup options and copy them to the main 
         # CLI setup task

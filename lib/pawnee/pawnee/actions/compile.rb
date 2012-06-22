@@ -22,6 +22,7 @@ module Pawnee
     #
     # :bin_file   - the name of an executable that the method can check for in the path
     # :configure  - a string of options to pass to the ./configure command.
+    # :skip_configure - skips the configure step
     #
     # === Block
     # You can also pass a block that if it returns true, it will not 
@@ -76,7 +77,7 @@ module Pawnee
         
         download(url)
         extract
-        configure
+        configure unless options[:skip_configure]
         make
         make_install
       end
