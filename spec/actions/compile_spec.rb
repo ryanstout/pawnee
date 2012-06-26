@@ -10,6 +10,9 @@ describe "compile actions" do
   end
   
   it 'should install a package' do
+    @base.as_root do
+      @base.remove_file("/usr/local/bin/redis-server")
+    end
     @base.exec('which redis-server').should == ''
     
     @base.compile('http://redis.googlecode.com/files/redis-2.4.15.tar.gz', '/home/vagrant/redis-server/', {:skip_configure => true, :bin_file => 'redis-server'})

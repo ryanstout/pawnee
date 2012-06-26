@@ -10,14 +10,14 @@ module Pawnee
         data, config = args.shift, args.shift
       end
       
-      if config[:once]
-        if destination_files.binread(destination)[data]
-          # Don't run again, the text is already in place
-          return
-        end
+      if destination_files.binread(destination)[data]
+        say_status :identical, destination
+        # Don't run again, the text is already in place
+        return
       end
       
-      action InjectIntoFile.new(self, destination, data, config)
+      action Thor::Actions::InjectIntoFile.new(self, destination, data, config)
     end
+    alias_method :inject_into_file, :insert_into_file
   end
 end

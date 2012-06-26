@@ -1,6 +1,7 @@
 require 'pawnee/actions/package'
 require 'pawnee/actions/compile'
 require 'pawnee/actions/user'
+require 'pawnee/actions/inject_into_file'
 
 module Pawnee
   # The pawnee gem provides the Pawnee::Base class which includes Thor::Actions,
