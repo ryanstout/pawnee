@@ -66,62 +66,89 @@ module Pawnee
         return base.run(*args)
       end
       
-      def home_for_user(find_user)
+      def passwd_data(find_user)
         passwd_data = base.destination_files.binread('/etc/passwd')
 
         if passwd_data
           passwd_data.split(/\n/).each do |line|
-            user, *_, home, _ = line.split(':')
+            user, *_, home, shell = line.split(':')
           
             if user == find_user
-              return home
+              return home, shell
             end
           end
         end
         
-        return nil
+        return nil, nil        
+      end
+      
+      def home_for_user(find_user)
+        home, shell = passwd_data(find_user)
+        return home
+      end
+
+      def shell_for_user(find_user)
+        home, shell = passwd_data(find_user)
+        return shell
       end
       
       # Pull in the current (starting) state of the attributes 
       # for the User model
       def read_from_system
-        @uid, stderr, exit_code, _ = exec("id -u #{login}", true)
+        @uid, stderr, exit_code, _ = exec("id -u #{login}", :with_codes => true, :log_stderr => false, :no_pty => true)
         @uid = @uid.strip
         if exit_code == 0
           # The login exists, load in more data
-          @gid = exec("id -g #{login}").strip
-          @groups = exec("groups #{login}").gsub(/^[^:]+[:]/, '').strip.split(/ /).sort
+          @gid = exec("id -g #{login}", :log_stderr => false, :no_pty => true).strip
+          
+          @groups = exec("groups #{login}", :no_pty => true).gsub(/^[^:]+[:]/, '').strip.split(/ /).sort
           @home = home_for_user(login)
+          
+          # TODO: Load in existing shell
+          @shell = shell_for_user(login)
           self.new_record = false
 
           # Reject any ones we just changed, so its as if we did a find with these
           @changed_attributes = @changed_attributes.reject {|k,v| [:uid, :gid, :groups, :login].include?(k.to_sym) }
+          @original_groups_value = @groups
         else
           # No user
           @uid = nil
+          @groups ||= []
+          @shell ||= '/bin/bash'
+          self.shell_will_change!
           self.new_record = true
         end
       end
 
       # Write any changes out
       def save
+        # Since groups is an array, we have to manually check to see if
+        # its changed, because people can do << to it
+        if @original_groups_value != @groups
+          # Mark as changed
+          self.groups_will_change!
+          
+          @original_groups_value = @groups
+        end
+        
         if changed?
           raise "A login must be specified" unless login
           
           if new_record?
             # Just create a new user
             command = ["useradd"]
-            base.say_status :create_user, login
+            base.say_status :create_user, login, :green
           else
             # Modify an existing user
             command = ["usermod"]
-            base.say_status :update_user, login
+            base.say_status :update_user, login, :green
           end
           
           # Set options
           command << "-u #{uid}" if uid && uid_changed?
           command << "-g #{gid}" if gid && gid_changed?
-          command << "-G #{groups.join(',')}" if groups && groups_changed?
+          command << "-G #{groups.join(',')}" if groups && groups_changed? && groups.size != 0
           command << "-c #{comment.inspect}" if comment && comment_changed?
           command << "-s #{shell.inspect}" if shell && shell_changed?
           command << "-p #{password.inspect}" if password && password_changed?
@@ -131,7 +158,7 @@ module Pawnee
           command << login
           
           base.as_root do
-            base.exec(command.join(' '))
+            base.exec(command.join(' '), :no_pty => true)
           end
         else
           base.say_status :user_exists, login, :blue
@@ -141,7 +168,7 @@ module Pawnee
       def destroy
         self.new_record = true
         base.as_root do
-          base.exec("userdel #{login}")
+          base.exec("userdel #{login}", :no_pty => true)
         end
       end
     end

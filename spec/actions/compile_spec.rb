@@ -10,16 +10,11 @@ describe "compile actions" do
   end
   
   it 'should install a package' do
-    @base.install_packages('libpcre3', 'libpcre3-dev', 'libpcrecpp0', 'libssl-dev', 'zlib1g-dev')
-    @base.as_root do
-      @base.exec('rm /usr/local/sbin/nginx')
-    end
+    @base.exec('which redis-server').should == ''
     
-    @base.exec('which nginx').should == ''
+    @base.compile('http://redis.googlecode.com/files/redis-2.4.15.tar.gz', '/home/vagrant/redis-server/', {:skip_configure => true, :bin_file => 'redis-server'})
     
-    @base.compile('http://nginx.org/download/nginx-1.2.0.tar.gz', '/home/vagrant/nginx/', {configure: '--sbin-path=/usr/local/sbin', :bin_file => 'nginx'})
-    
-    @base.exec('which nginx').should_not == ''
+    @base.exec('which redis-server').should_not == ''
   end
   
 end

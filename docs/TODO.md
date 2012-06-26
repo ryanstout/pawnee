@@ -12,7 +12,11 @@ TODO: System to check for and register updates/modifications
 TODO: Add apt-get update to package stuff - make it only run update once per all jobs
 TODO: Make it so copied files can be overridden in a rails project
 TODO: Track modified on compile?
-TODO: Should setup self.source_root to point to the templates dir in the gem 
+TODO: Should setup self.source_root to point to the templates dir in the gem
+TODO: Add --verbose option that shows the output of any outputs (bundler for example)
+ 				- maybe show stderr by default?
+				- maybe option to show on run/exec
+				- show stderr when there's a non-0 exit status
 
 
 def setup

@@ -21,7 +21,7 @@ module Pawnee
     # installed
     #
     # :bin_file   - the name of an executable that the method can check for in the path
-    # :configure  - a string of options to pass to the ./configure command.
+    # :config_options  - a string of options to pass to the ./configure command.
     # :skip_configure - skips the configure step
     #
     # === Block
@@ -35,7 +35,7 @@ module Pawnee
       installed = false
       if options[:bin_file]
         # Check if the bin file is installed
-        installed = exec(options[:bin_file]).strip != ''
+        installed = exec("which #{options[:bin_file]}").strip != ''
       else
         raise "You must pass :bin_file or a block to compile" unless block_given?
         installed = yield()
@@ -109,7 +109,7 @@ module Pawnee
       # action_name<String>:: An action name (used to explain what is happening)
       def run_with_failure_handler(command, action_name)
         base.say_status action_name.downcase, ''
-        stdout, stderr, exit_code, exit_status = base.exec(command, true)
+        stdout, stderr, exit_code, exit_status = base.exec(command, :with_codes => true)
         
         if exit_code != 0
           base.say_status :error, "Unable to #{action_name}, see output below", :red
@@ -122,7 +122,7 @@ module Pawnee
 
       # Runs ./configure on the files
       def configure
-        run_with_failure_handler("cd #{@extracted_path} ; ./configure #{options[:configure] || ''}", 'configure')
+        run_with_failure_handler("cd #{@extracted_path} ; ./configure #{options[:config_options] || ''}", 'configure')
       end
       
       # Runs make

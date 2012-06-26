@@ -106,7 +106,7 @@ describe Pawnee::Base do
       'servers' => [
         {'domain' => 'test1.com', 'roles' => ['red']},
         {'domain' => 'test2.com', 'roles' => ['blue', 'red']}
-      ]
+      ], 'force' => true
     }
 
     Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(config_options)
@@ -130,7 +130,7 @@ describe Pawnee::Base do
       'servers' => [
         {'domain' => 'test1.com', 'roles' => ['red']},
         {'domain' => 'test2.com', 'roles' => ['red']}
-      ]
+      ], 'force' => true
     }
     
     Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(options)
@@ -151,7 +151,7 @@ describe Pawnee::Base do
       'servers' => [
         {'domain' => 'test1.com', 'roles' => ['red']},
         {'domain' => 'test2.com', 'roles' => ['red', 'blue']}
-      ]
+      ], 'force' => true
     }
     
     Pawnee::Base.should_receive(:config_options).at_least(:once).and_return(options)

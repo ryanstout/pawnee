@@ -33,17 +33,18 @@ module Pawnee
     method_option :bin, :type => :boolean, :default => false, :aliases => '-b', :banner => "Generate a binary for your library."
     def gem(name)
       # Prefix all gems with pawnee-
-      name = 'pawnee-' + name.chomp("/") # remove trailing slash if present
-      folder_name = name.gsub('-', '/')
-      target = File.join(Dir.pwd, name)
-      constant_name = name.split('_').map{|p| p[0..0].upcase + p[1..-1] }.join
-      constant_name = constant_name.split('-').map{|q| q[0..0].upcase + q[1..-1] }.join('::') if constant_name =~ /-/
+      dir_name = 'pawnee-' + name.chomp("/") # remove trailing slash if present
+      folder_name = "pawnee/" + name
+      target = File.join(Dir.pwd, dir_name)
+      constant_name = "Pawnee::" + name.split('-').map{|q| q[0..0].upcase + q[1..-1] }.join('')
+      puts constant_name
       constant_array = constant_name.split('::')
+      puts constant_array.inspect
       git_user_name = `git config user.name`.chomp
       git_user_email = `git config user.email`.chomp
       opts = {
         # Don't require the pawnee- when requring though
-        :name           => name.gsub(/^pawnee[-]/, ''),
+        :name           => name,
         :constant_name  => constant_name,
         :constant_array => constant_array,
         :author         => git_user_name.empty? ? "TODO: Write your name" : git_user_name,
@@ -54,8 +55,8 @@ module Pawnee
       template(File.join("newgem/LICENSE.tt"),               File.join(target, "LICENSE"),                opts)
       template(File.join("newgem/README.md.tt"),             File.join(target, "README.md"),              opts)
       template(File.join("newgem/gitignore.tt"),             File.join(target, ".gitignore"),             opts)
-      template(File.join("newgem/newgem.gemspec.tt"),        File.join(target, "#{name}.gemspec"),        opts)
-      template(File.join("newgem/lib/newgem.rb.tt"),  File.join(target, "lib/#{name}.rb"),         opts)
+      template(File.join("newgem/newgem.gemspec.tt"),        File.join(target, "#{dir_name}.gemspec"),        opts)
+      template(File.join("newgem/lib/newgem.rb.tt"),  File.join(target, "lib/#{dir_name}.rb"),         opts)
       template(File.join("newgem/lib/pawnee/newgem/version.rb.tt"), File.join(target, "lib/#{folder_name}/version.rb"), opts)
       template(File.join("newgem/lib/pawnee/newgem/base.rb.tt"), File.join(target, "lib/#{folder_name}/base.rb"), opts)
       template(File.join("newgem/spec/spec_helper.rb.tt"),   File.join(target, "spec/spec_helper.rb"), opts)

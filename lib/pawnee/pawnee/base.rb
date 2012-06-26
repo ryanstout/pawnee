@@ -115,7 +115,7 @@ module Pawnee
 
     # Guess the gem name based on the class name
     def self.gem_name
-      self.name.gsub(/[:][:]Base$/, '').gsub(/^[^:]+[:][:]/, '').gsub('::', '-').downcase
+      self.name.gsub(/[:][:]Base$/, '').gsub(/^[^:]+[:][:]/, '').gsub(/([A-Z]+)([A-Z][a-z])/,'\1-\2').gsub(/([a-z\d])([A-Z])/,'\1-\2').downcase
     end
     
     no_tasks {
@@ -184,13 +184,13 @@ module Pawnee
       # Whenever say is used, also print out the server name
       def say(*args)
         text = args[0]
-        text = "[#{server}]:\t" + text.to_s
+        text = "[#{server}]:\t" + text.to_s if server
         super(text, *args[1..-1])
       end
       
       def say_status(*args)
         text = args[0]
-        text = "[#{server}]:\t" + text.to_s
+        text = "[#{server}]:\t" + text.to_s if server
         super(text, *args[1..-1])        
       end
     }
