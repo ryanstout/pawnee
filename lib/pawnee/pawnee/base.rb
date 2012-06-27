@@ -131,6 +131,8 @@ module Pawnee
 
         unless current.include?(task.name)
           current << task.name
+          
+          puts "************************ Run task: #{task.name}"
 
           # Setup the server connections before we run the task
           servers = options[:servers] || options['servers']
