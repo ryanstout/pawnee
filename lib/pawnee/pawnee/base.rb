@@ -25,7 +25,7 @@ module Pawnee
     include Pawnee::SshConnection
     include Roles
     
-    attr_accessor :server
+    attr_accessor :server, :server_options, :setup_with_connection
     
     # Creates an instance of the pawnee recipe
     #
@@ -121,6 +121,7 @@ module Pawnee
     no_tasks {
       
       # # Invoke the given task if the given args.
+      # TODO: This method needs some refactoring
       def invoke_task(task, *args) #:nodoc:
         current = @_invocations[self.class]
 
@@ -142,41 +143,71 @@ module Pawnee
             # No servers, just run locally
             task.run(self, *args)
           else
+            first_invoke = true
+            # Create a list of instances that we want to run this task
+            instances = []
+            
             # Run the setup task, setting up the needed connections
             servers.each do |server|
               # Only run on this server if the server supports the current recipe's
               # role.
               next unless server.is_a?(String) || server.is_a?(Net::SSH::Connection::Session) || (server['roles'] && server['roles'].include?(self.class.class_role))
 
+              if first_invoke
+                instance = self
+                first_invoke = false
+              else
+                # Make a clone (since we want to run self on different threads)
+                # TODO: Look into how deep we need to make this clone (options may be 
+                # shared right now)
+                instance = self.clone
+              end
               # Setup the connection to the server
               if server.is_a?(Net::SSH::Connection::Session)
-                self.destination_connection = server
-                self.server = server.host
+                instance.destination_connection = server
+                instance.server = server.host
+                instance.setup_with_connection = true
               elsif server.is_a?(String)
                 # Server name is a string, asume ubuntu
-                self.destination_connection = Net::SSH.start(server, 'ubuntu')
-                self.server = server
+                instance.destination_connection = Net::SSH.start(server, 'ubuntu')
+                instance.server = server
               else
                 # Server is a hash
-                self.destination_connection = Net::SSH.start(server['domain'], server['user'] || 'ubuntu')
-                self.server = server['domain']
+                instance.destination_connection = Net::SSH.start(server['domain'], server['user'] || 'ubuntu')
+                instance.server = server['domain']
+                instance.server_options = server
               end
               
+              # Setup server options if not setup already
+              instance.server_options = instance.server_options || {}
+              
+              # Add the instance to the list of instances to run on
+              instances << instance
+            end
+            
+            # Take the list of instances and invoke the task on each one in a seperate thread
+            threads = []
+            
+            instances.each do |instance|
+              threads << Thread.new do
+                # Run the task
+                task.run(instance, *args)
 
-              # Run the task
-              task.run(self, *args)
+                # Remove the server
+                instance.server = nil
 
-              # Remove the server
-              self.server = nil
-
-              # Close the connection
-              if self.destination_connection
-                # Close the conection only if we created it.  If it was passed in as a connection
-                # then the creator is responsible for closing it
-                self.destination_connection.close unless server.is_a?(Net::SSH::Connection::Session)
-                self.destination_connection = nil
+                # Close the connection
+                if instance.destination_connection
+                  # Close the conection only if we created it.  If it was passed in as a connection
+                  # then the creator is responsible for closing it
+                  instance.destination_connection.close unless instance.setup_with_connection
+                  instance.destination_connection = nil
+                end
               end
             end
+            
+            # Wait for threads to finish
+            threads.each(&:join)
           end
         end
       end
