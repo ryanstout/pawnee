@@ -10,6 +10,9 @@ module Pawnee
         data, config = args.shift, args.shift
       end
       
+      # Get the data if its a proc
+      data = data.call if data.is_a?(Proc)
+      
       if destination_files.binread(destination)[data]
         say_status :identical, destination
         # Don't run again, the text is already in place

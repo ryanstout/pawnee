@@ -110,7 +110,7 @@ module Pawnee
 
           # Reject any ones we just changed, so its as if we did a find with these
           @changed_attributes = @changed_attributes.reject {|k,v| [:uid, :gid, :groups, :login].include?(k.to_sym) }
-          @original_groups_value = @groups
+          @original_groups_value = @groups.dup
         else
           # No user
           @uid = nil
