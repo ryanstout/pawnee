@@ -6,10 +6,7 @@ TODO: Add a as_user('user') do .. end option
 					- maybe have an option to run from within a shell, or we could get them into the right place every time
 				- maybe we should add a system to "get you to root, then get you to another user"
 TODO: Need to make a clear way for pawnee gems (and recipes) to provide actions (example, git gem provides git actions)
-TODO: Run actions in threads (across multiple servers)
 TODO: Test to make sure arguments work directly as well (they probably don't right now)
-TODO: System to check for and register updates/modifications
-TODO: Add apt-get update to package stuff - make it only run update once per all jobs
 TODO: Make it so copied files can be overridden in a rails project
 TODO: Track modified on compile?
 TODO: Should setup self.source_root to point to the templates dir in the gem
@@ -17,6 +14,23 @@ TODO: Add --verbose option that shows the output of any outputs (bundler for exa
  				- maybe show stderr by default?
 				- maybe option to show on run/exec
 				- show stderr when there's a non-0 exit status
+TODO: Make sure it would print out any errors from bundler
+TODO: Raise error on run error (with options to ignore during run, or options to always ignore (global config))
+TODO: Allow ssh host strings user:pw@domain
+
+
+
+THINK ABOUT:
+
+---- logging system -----
+
+Log levels
+- error - stderr
+- info - actions
+- debug - stdout
+
+Log Actions
+same, identical, update, add, run
 
 
 def setup

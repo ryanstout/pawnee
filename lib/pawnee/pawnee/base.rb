@@ -132,7 +132,7 @@ module Pawnee
         unless current.include?(task.name)
           current << task.name
           
-          puts "************************ Run task: #{task.name}"
+          puts " Run task: #{self.class.class_role.to_s} - #{task.name} ".center(80, '*')
 
           # Setup the server connections before we run the task
           servers = options[:servers] || options['servers']
@@ -217,13 +217,15 @@ module Pawnee
       # Whenever say is used, also print out the server name
       def say(*args)
         text = args[0]
-        text = "[#{server}]:\t" + text.to_s if server
+        name = (server_options && server_options['name']) || server
+        text = "[#{name}]:\t" + text.to_s if name
         super(text, *args[1..-1])
       end
       
       def say_status(*args)
         text = args[0]
-        text = "[#{server}]:\t" + text.to_s if server
+        name = (server_options && server_options['name']) || server
+        text = "[#{name}]:\t" + text.to_s if name
         super(text, *args[1..-1])        
       end
     }

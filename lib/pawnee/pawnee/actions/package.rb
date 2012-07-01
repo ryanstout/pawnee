@@ -74,8 +74,9 @@ module Pawnee
     # to prevent this from happening too much.
     def update_package_list
       # TODO: this needs to be per server
-      unless defined?(@@packages_updated)
-        @@packages_updated = true
+      unless defined?(@@packages_updated) && @@packages_updated[server]
+        @@packages_updated ||= {}
+        @@packages_updated[server] = true
         as_root do
           exec('DEBIAN_FRONTEND=noninteractive apt-get -q -y update', :no_pty => true)
         end
