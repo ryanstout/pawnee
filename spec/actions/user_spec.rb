@@ -10,7 +10,7 @@ describe "user actions" do
   end
   
   def user_exists?(login)
-    _, _, exit_code, _ = @base.exec("id -u #{login}", :with_codes => true)
+    _, _, exit_code, _ = @base.exec("id -u #{login}", :with_codes => true, :log_stderr => false)
     return exit_code == 0
   end
   

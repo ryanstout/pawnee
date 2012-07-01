@@ -20,7 +20,7 @@ RSpec.configure do |config|
     unless ENV['TRAVIS']
       # Rollback the server
       puts "Roll back test server"
-      # `cd spec/vagrant/ ; BUNDLE_GEMFILE=../../Gemfile bundle exec vagrant sandbox rollback`
+      `cd spec/vagrant/ ; BUNDLE_GEMFILE=../../Gemfile bundle exec vagrant sandbox rollback`
     end
   end
 end

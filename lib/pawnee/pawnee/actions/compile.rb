@@ -35,7 +35,7 @@ module Pawnee
       installed = false
       if options[:bin_file]
         # Check if the bin file is installed
-        installed = exec("which #{options[:bin_file]}").strip != ''
+        installed = exec("which #{options[:bin_file]}", :log_stderr => false).strip != ''
       else
         raise "You must pass :bin_file or a block to compile" unless block_given?
         installed = yield()
@@ -45,6 +45,8 @@ module Pawnee
         say_status :already_compiled, url, :blue
         return true
       else
+        
+        track_modification!
         # Compile and install
         Compile.new(self, url, temp_dir, options)
       end

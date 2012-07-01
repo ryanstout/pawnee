@@ -17,6 +17,7 @@ TODO: Add --verbose option that shows the output of any outputs (bundler for exa
 TODO: Make sure it would print out any errors from bundler
 TODO: Raise error on run error (with options to ignore during run, or options to always ignore (global config))
 TODO: Allow ssh host strings user:pw@domain
+TODO: Make thor-ssh local api compatible
 
 
 
