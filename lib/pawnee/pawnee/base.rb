@@ -230,33 +230,9 @@ module Pawnee
       end
     }
     
-    private
-      def self.global_options
-        @global_options = true
-        yield
-        @global_options = false
-      end
-      
+    private      
       def self.check_unknown_options?(config)
         false
-      end
-    
-    
-      # Add options to create global method_options, otherwise
-      # they are now prefixed by the recipe name by default
-      def self.method_option(name, options={})
-        scope = if options[:for]
-          find_and_refresh_task(options[:for]).options
-        else
-          method_options
-        end
-
-        unless @global_options
-          prefix = self.gem_name.gsub('-', '_')
-          name = "#{prefix}_#{name}".to_sym
-        end
-
-        build_option(name, options, scope)
       end
       
 

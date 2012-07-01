@@ -18,7 +18,7 @@ describe "compile actions" do
     
     @base.compile('http://redis.googlecode.com/files/redis-2.4.15.tar.gz', '/home/vagrant/redis-server/', {:skip_configure => true, :bin_file => 'redis-server'})
     
-    @base.exec('which redis-server').should_not == ''
+    @base.exec('which redis-server', :log_stderr => false).should_not == ''
     
     @base.modified?.should == true
   end

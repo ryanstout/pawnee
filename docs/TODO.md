@@ -18,6 +18,9 @@ TODO: Make sure it would print out any errors from bundler
 TODO: Raise error on run error (with options to ignore during run, or options to always ignore (global config))
 TODO: Allow ssh host strings user:pw@domain
 TODO: Make thor-ssh local api compatible
+TODO: Move to self namespacing - remove global_options
+TODO: Work out dependency loading
+TODO: Make the source_root work by default
 
 
 
@@ -29,6 +32,12 @@ Log levels
 - error - stderr
 - info - actions
 - debug - stdout
+
+State Changes (and colors):
+- create (green)
+- update (yellow)
+- destroy (red?)
+- identical (blue)
 
 Log Actions
 same, identical, update, add, run

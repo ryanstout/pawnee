@@ -11,22 +11,17 @@ module Pawnee
     namespace ''
 
     desc "setup", "calls setup for each pawnee gem in bundler"
-    global_options do
-      method_option :roles, :type => :array, :default => :all
-    end
+    method_option :roles, :type => :array, :default => :all
     def setup
       Pawnee::Base.invoke_roles(:setup, self.options[:roles], self.options)
     end
 
 
     desc "teardown", "calls teardown for each pawnee gem in bundler"
-    global_options do
-      method_option :roles, :type => :array, :default => :all
-    end
+    method_option :roles, :type => :array, :default => :all
     def teardown
       Pawnee::Base.invoke_roles(:setup, self.options[:roles], self.options)
     end
-
 
     # Create a new gem (pulled from bundler and modified - MIT LICENSE)
     desc "gem GEM", "Creates a skeleton recipie"
