@@ -69,7 +69,7 @@ module Pawnee
           # with pre-parsed options.
           array_options, hash_options = [], options
         end
-      
+        
         # Let Thor::Options parse the options first, so it can remove
         # declared options from the array. This will leave us with
         # a list of arguments that weren't declared.
@@ -77,21 +77,22 @@ module Pawnee
         # the config default's
         opts = Pawnee::Options.new(parse_options, hash_options)
         self.options = opts.parse(array_options)
-      
+
         # If unknown options are disallowed, make sure that none of the
         # remaining arguments looks like an option.
         opts.check_unknown! if self.class.check_unknown_options?(config)
-      
+
         # Add the remaining arguments from the options parser to the
         # arguments passed in to initialize. Then remove any positional
         # arguments declared using #argument (this is primarily used
         # by Thor::Group). Tis will leave us with the remaining
         # positional arguments.
+        to_parse  = args
+        to_parse += opts.remaining unless self.class.strict_args_position?(config)
+
         thor_args = Thor::Arguments.new(self.class.arguments)
-        thor_args.parse(args + opts.remaining).each { |k,v| send("#{k}=", v) }
-        args = thor_args.remaining
-      
-        @args = args
+        thor_args.parse(to_parse).each { |k,v| send("#{k}=", v) }
+        @args = thor_args.remaining
         #-- end copy from thor/base.rb#initialize
       end
     end

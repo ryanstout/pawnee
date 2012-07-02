@@ -21,7 +21,9 @@ TODO: Make thor-ssh local api compatible
 TODO: Move to self namespacing - remove global_options
 TODO: Work out dependency loading
 TODO: Make the source_root work by default
-
+TOOD: Add gem installer
+TODO: Non-0 response codes should throw an error (and log the error) unless an option is passed in
+TODO: Consider setting: set -o pipefail    in the shell out
 
 
 THINK ABOUT:
@@ -29,9 +31,12 @@ THINK ABOUT:
 ---- logging system -----
 
 Log levels
+- say (normal log)
 - error - stderr
 - info - actions
 - debug - stdout
+
+(error is the default)
 
 State Changes (and colors):
 - create (green)
